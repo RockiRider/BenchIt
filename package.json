@@ -10,14 +10,36 @@
 		"Other"
 	],
 	"activationEvents": [
-		"onCommand:benchme.helloWorld"
+		"*",
+		"onView:benchMe_sidebar"
 	],
 	"main": "./extension.js",
 	"contributes": {
+		"viewsContainers":{
+			"activitybar": [
+				{
+					"id": "benchMe_sidebar_view",
+					"title": "BenchMe",
+					"icon": "assets/imgs/icon.svg"
+				}
+			]
+		},
+		"views":{
+			"benchMe_sidebar_view":[
+				{
+					"type": "webview",
+					"id": "benchMe_sidebar",
+					"name": "BenchMe",
+					"icon":"assets/imgs/icon.svg",
+					"contextualTitle": "BenchMe"
+				}
+			]
+		},
 		"commands": [
 			{
-				"command": "benchme.helloWorld",
-				"title": "Hello World"
+				"command": "benchme.addCase",
+				"category": "BenchMe",
+				"title": "Add Case"
 			}
 		]
 	},
