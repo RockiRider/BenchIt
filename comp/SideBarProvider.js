@@ -1,8 +1,7 @@
 const vscode = require('vscode');
-//import {getNonce} from "./getNonce";
-const getNonce =require('./getNonce');
+const getNonce = require('./getNonce');
 
- class SidebarProvider {
+class SidebarProvider {
   constructor(_extensionUri) {
     this._extensionUri = _extensionUri;
   }
@@ -37,29 +36,34 @@ const getNonce =require('./getNonce');
     this._view = panel;
   }
   _getHtmlForWebview(webview) {
-    const styleResetUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, "media", "reset.css"));
-    const scriptUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, "out", "compiled/sidebar.js"));
-    const styleMainUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, "out", "compiled/sidebar.css"));
-    const styleVSCodeUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, "media", "vscode.css"));
+    const styleResetUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, "assets", "reset.css"));
+    const scriptUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, "assets", "sidebar/main.js"));
+    const styleMainUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, "assets", "compiled/sidebar.css"));
+    const styleVSCodeUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, "assets", "vscode.css"));
     // Use a nonce to only allow a specific script to be run.
     const nonce = getNonce.getNonce();
     return `<!DOCTYPE html>
             <html lang="en">
-            <head>
-                <meta charset="UTF-8">
-                <!--
-                    Use a content security policy to only allow loading images from https or from our extension directory,
-                    and only allow scripts that have a specific nonce.
-        -->
-       
-                <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                <link href="${styleResetUri}" rel="stylesheet">
-                <link href="${styleVSCodeUri}" rel="stylesheet">
-        <link href="${styleMainUri}" rel="stylesheet">
-            </head>
-      <body>
+              <head>
+                  <meta charset="UTF-8">
+                  <!--
+                      Use a content security policy to only allow loading images from https or from our extension directory,
+                      and only allow scripts that have a specific nonce.
+                  -->
+                  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                  <link href="${styleResetUri}" rel="stylesheet">
+                  <link href="${styleVSCodeUri}" rel="stylesheet">
+                  <link href="${styleMainUri}" rel="stylesheet">
+              </head>
+              <body>
+                <button id="button">Button Here</button>
+
+                <!-- Scripts below -->
+                <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+			            integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous">
+		            </script>
                 <script nonce="${nonce}" src="${scriptUri}"></script>
-            </body>
+              </body>
             </html>`;
   }
 }
@@ -67,6 +71,6 @@ const getNonce =require('./getNonce');
 //exports.getNonce = getNonce;
 
 module.exports = {
-	// @ts-ignore
-	SidebarProvider
+  // @ts-ignore
+  SidebarProvider
 }
