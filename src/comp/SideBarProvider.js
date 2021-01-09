@@ -54,6 +54,9 @@ class SidebarProvider {
                   <link href="${styleResetUri}" rel="stylesheet">
                   <link href="${styleVSCodeUri}" rel="stylesheet">
                   <link href="${styleMainUri}" rel="stylesheet">
+                  <script nonce="${nonce}">
+                    const jsVscode = acquireVsCodeApi();
+                  </script>
               </head>
               <body>
                 <!-- Svelte Scripts below -->

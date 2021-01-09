@@ -20,6 +20,10 @@ var app = (function () {
     function is_empty(obj) {
         return Object.keys(obj).length === 0;
     }
+
+    function append(target, node) {
+        target.appendChild(node);
+    }
     function insert(target, node, anchor) {
         target.insertBefore(node, anchor || null);
     }
@@ -35,13 +39,30 @@ var app = (function () {
     function space() {
         return text(' ');
     }
+    function listen(node, event, handler, options) {
+        node.addEventListener(event, handler, options);
+        return () => node.removeEventListener(event, handler, options);
+    }
     function children(element) {
         return Array.from(element.childNodes);
+    }
+    function set_data(text, data) {
+        data = '' + data;
+        if (text.wholeText !== data)
+            text.data = data;
     }
 
     let current_component;
     function set_current_component(component) {
         current_component = component;
+    }
+    function get_current_component() {
+        if (!current_component)
+            throw new Error('Function called outside component initialization');
+        return current_component;
+    }
+    function onMount(fn) {
+        get_current_component().$$.on_mount.push(fn);
     }
 
     const dirty_components = [];
@@ -242,6 +263,14 @@ var app = (function () {
     	let h1;
     	let t1;
     	let h2;
+    	let t3;
+    	let button;
+    	let t5;
+    	let p;
+    	let t6_value = JSON.stringify(/*nameArr*/ ctx[0], null, 2) + "";
+    	let t6;
+    	let mounted;
+    	let dispose;
 
     	return {
     		c() {
@@ -250,30 +279,80 @@ var app = (function () {
     			t1 = space();
     			h2 = element("h2");
     			h2.textContent = "Where the fuck am I??";
+    			t3 = space();
+    			button = element("button");
+    			button.textContent = "Click me";
+    			t5 = space();
+    			p = element("p");
+    			t6 = text(t6_value);
     		},
     		m(target, anchor) {
     			insert(target, h1, anchor);
     			insert(target, t1, anchor);
     			insert(target, h2, anchor);
+    			insert(target, t3, anchor);
+    			insert(target, button, anchor);
+    			insert(target, t5, anchor);
+    			insert(target, p, anchor);
+    			append(p, t6);
+
+    			if (!mounted) {
+    				dispose = listen(button, "click", /*click_handler*/ ctx[1]);
+    				mounted = true;
+    			}
     		},
-    		p: noop,
+    		p(ctx, [dirty]) {
+    			if (dirty & /*nameArr*/ 1 && t6_value !== (t6_value = JSON.stringify(/*nameArr*/ ctx[0], null, 2) + "")) set_data(t6, t6_value);
+    		},
     		i: noop,
     		o: noop,
     		d(detaching) {
     			if (detaching) detach(h1);
     			if (detaching) detach(t1);
     			if (detaching) detach(h2);
+    			if (detaching) detach(t3);
+    			if (detaching) detach(button);
+    			if (detaching) detach(t5);
+    			if (detaching) detach(p);
+    			mounted = false;
+    			dispose();
     		}
     	};
+    }
+
+    function instance($$self, $$props, $$invalidate) {
+    	let nameArr = [];
+
+    	onMount(() => {
+    		window.addEventListener("message", event => {
+    			const message = event.data; //Json data
+    			console.log(message);
+
+    			switch (message.type) {
+    				case "new-function":
+    					$$invalidate(0, nameArr = [{ name: message.value }, ...nameArr]);
+    					break;
+    			}
+    		});
+    	});
+
+    	const click_handler = () => {
+    		//Ignore the error below its getting pulled through on a previous script
+    		//Could try bringing it through here though?
+    		jsVscode.postMessage({ type: "onInfo", value: " suck my balls " });
+    	};
+
+    	return [nameArr, click_handler];
     }
 
     class MainPanel extends SvelteComponent {
     	constructor(options) {
     		super();
-    		init(this, options, null, create_fragment, safe_not_equal, {});
+    		init(this, options, instance, create_fragment, safe_not_equal, {});
     	}
     }
 
+    //Ignore Error Below 
     const app = new MainPanel({
       target: document.body,
     });
