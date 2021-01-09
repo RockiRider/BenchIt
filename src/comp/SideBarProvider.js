@@ -37,7 +37,7 @@ class SidebarProvider {
   }
   _getHtmlForWebview(webview) {
     const styleResetUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, "assets", "reset.css"));
-    const scriptUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, "assets", "sidebar/main.js"));
+    const scriptUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, "out", "compiled/MainPanel.js"));
     const styleMainUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, "assets", "compiled/sidebar.css"));
     const styleVSCodeUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, "assets", "vscode.css"));
     // Use a nonce to only allow a specific script to be run.
@@ -56,12 +56,7 @@ class SidebarProvider {
                   <link href="${styleMainUri}" rel="stylesheet">
               </head>
               <body>
-                <button id="button">Button Here</button>
-
-                <!-- Scripts below -->
-                <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
-			            integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous">
-		            </script>
+                <!-- Svelte Scripts below -->
                 <script nonce="${nonce}" src="${scriptUri}"></script>
               </body>
             </html>`;
