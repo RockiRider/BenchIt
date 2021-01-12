@@ -4,6 +4,7 @@ import commonjs from "@rollup/plugin-commonjs";
 import { terser } from "rollup-plugin-terser";
 import sveltePreprocess from "svelte-preprocess";
 //import typescript from "@rollup/plugin-typescript";
+import css from 'rollup-plugin-css-only'
 import path from "path";
 import fs from "fs"; 
 
@@ -42,7 +43,17 @@ export default fs
           browser: true,
           dedupe: ["svelte"],
         }),
+        css({
+          // Filename to write all styles to
+          output: 'bundle.css',
+          // Callback that will be called ongenerate with two arguments:
+          // - styles: the contents of all style tags combined: 'body { color: green }'
+          // - styleNodes: an array of style objects: [{lang: 'css', content: 'body { color: green }'}]
+          output: function (styles, styleNodes) {
+              fs.writeFileSync('out/compiled/'+name+'.css', styles);
+          }}),
         commonjs(),
+        
         
 
         // In dev mode, call `npm run start` once
