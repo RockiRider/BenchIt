@@ -1,15 +1,18 @@
 <script>
 import { onMount } from "svelte";
 
+
+  let idCount = 1;
   let nameArr = [];
 
   onMount(()=>{
     window.addEventListener("message",(event) =>{
       const message = event.data //Json data
-      console.log(message);
+
       switch(message.type){
         case "new-function": 
-          nameArr = [...nameArr,{name: message.value}];
+          nameArr = [...nameArr,{name: message.value,id:idCount}];
+          idCount++;
         break;
       }
     })
@@ -46,14 +49,7 @@ import { onMount } from "svelte";
 
 </style>
 
-<button on:click={() =>{
-  //Ignore the error below its getting pulled through on a previous script
-  //Could try bringing it through here though?
-  jsVscode.postMessage({
-    type: "onInfo",
-    value: ' suck my balls '
-  })
-}}>Tester</button>
+{#if idCount < 2}<h3>Use the addCase command to track functions</h3>{/if}
 {#each nameArr as name,i}
   <div class="boxArea">
     <div>
@@ -61,14 +57,27 @@ import { onMount } from "svelte";
     </div>
     <div class="btnArea">
       <button on:click={() =>{
-        console.log(i);
+        const methodName = name.name;
+        const realID = name.id;
         if (i > -1) {
-          nameArr.splice(i, 1);
-          console.log(nameArr);
-          nameArr = nameArr;
+          try {
+            //Update Backend
+            jsVscode.postMessage({
+              type: "onDelete",
+              name: methodName,
+              id: realID
+            })
+            //Update FrontEnd
+            nameArr.splice(i, 1);
+            nameArr = nameArr;  
+          } catch (error) {
+            jsVscode.postMessage({
+              type: "onError",
+              value: 'Failed To Remove Function'
+            })
+          }
         }
       }}>Remove</button>
     </div>
   </div>
 {/each}
-<p>{JSON.stringify(nameArr,null,2)}</p>

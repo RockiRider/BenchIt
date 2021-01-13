@@ -45,6 +45,9 @@ var app = (function () {
     function space() {
         return text(' ');
     }
+    function empty() {
+        return text('');
+    }
     function listen(node, event, handler, options) {
         node.addEventListener(event, handler, options);
         return () => node.removeEventListener(event, handler, options);
@@ -278,7 +281,25 @@ var app = (function () {
     	return child_ctx;
     }
 
-    // (57:0) {#each nameArr as name,i}
+    // (52:0) {#if idCount < 2}
+    function create_if_block(ctx) {
+    	let h3;
+
+    	return {
+    		c() {
+    			h3 = element("h3");
+    			h3.textContent = "Use the addCase command to track functions";
+    		},
+    		m(target, anchor) {
+    			insert(target, h3, anchor);
+    		},
+    		d(detaching) {
+    			if (detaching) detach(h3);
+    		}
+    	};
+    }
+
+    // (53:0) {#each nameArr as name,i}
     function create_each_block(ctx) {
     	let div2;
     	let div0;
@@ -288,11 +309,12 @@ var app = (function () {
     	let t1;
     	let div1;
     	let button;
+    	let t3;
     	let mounted;
     	let dispose;
 
-    	function click_handler_1() {
-    		return /*click_handler_1*/ ctx[2](/*i*/ ctx[5]);
+    	function click_handler() {
+    		return /*click_handler*/ ctx[2](/*name*/ ctx[3], /*i*/ ctx[5]);
     	}
 
     	return {
@@ -305,6 +327,7 @@ var app = (function () {
     			div1 = element("div");
     			button = element("button");
     			button.textContent = "Remove";
+    			t3 = space();
     			attr(h4, "class", "svelte-rocul4");
     			attr(button, "class", "svelte-rocul4");
     			attr(div1, "class", "btnArea svelte-rocul4");
@@ -318,15 +341,16 @@ var app = (function () {
     			append(div2, t1);
     			append(div2, div1);
     			append(div1, button);
+    			append(div2, t3);
 
     			if (!mounted) {
-    				dispose = listen(button, "click", click_handler_1);
+    				dispose = listen(button, "click", click_handler);
     				mounted = true;
     			}
     		},
     		p(new_ctx, dirty) {
     			ctx = new_ctx;
-    			if (dirty & /*nameArr*/ 1 && t0_value !== (t0_value = /*name*/ ctx[3].name + "")) set_data(t0, t0_value);
+    			if (dirty & /*nameArr*/ 2 && t0_value !== (t0_value = /*name*/ ctx[3].name + "")) set_data(t0, t0_value);
     		},
     		d(detaching) {
     			if (detaching) detach(div2);
@@ -337,15 +361,10 @@ var app = (function () {
     }
 
     function create_fragment(ctx) {
-    	let button;
-    	let t1;
-    	let t2;
-    	let p;
-    	let t3_value = JSON.stringify(/*nameArr*/ ctx[0], null, 2) + "";
-    	let t3;
-    	let mounted;
-    	let dispose;
-    	let each_value = /*nameArr*/ ctx[0];
+    	let t;
+    	let each_1_anchor;
+    	let if_block = /*idCount*/ ctx[0] < 2 && create_if_block();
+    	let each_value = /*nameArr*/ ctx[1];
     	let each_blocks = [];
 
     	for (let i = 0; i < each_value.length; i += 1) {
@@ -354,38 +373,39 @@ var app = (function () {
 
     	return {
     		c() {
-    			button = element("button");
-    			button.textContent = "Tester";
-    			t1 = space();
+    			if (if_block) if_block.c();
+    			t = space();
 
     			for (let i = 0; i < each_blocks.length; i += 1) {
     				each_blocks[i].c();
     			}
 
-    			t2 = space();
-    			p = element("p");
-    			t3 = text(t3_value);
+    			each_1_anchor = empty();
     		},
     		m(target, anchor) {
-    			insert(target, button, anchor);
-    			insert(target, t1, anchor);
+    			if (if_block) if_block.m(target, anchor);
+    			insert(target, t, anchor);
 
     			for (let i = 0; i < each_blocks.length; i += 1) {
     				each_blocks[i].m(target, anchor);
     			}
 
-    			insert(target, t2, anchor);
-    			insert(target, p, anchor);
-    			append(p, t3);
-
-    			if (!mounted) {
-    				dispose = listen(button, "click", /*click_handler*/ ctx[1]);
-    				mounted = true;
-    			}
+    			insert(target, each_1_anchor, anchor);
     		},
     		p(ctx, [dirty]) {
-    			if (dirty & /*console, nameArr*/ 1) {
-    				each_value = /*nameArr*/ ctx[0];
+    			if (/*idCount*/ ctx[0] < 2) {
+    				if (if_block) ; else {
+    					if_block = create_if_block();
+    					if_block.c();
+    					if_block.m(t.parentNode, t);
+    				}
+    			} else if (if_block) {
+    				if_block.d(1);
+    				if_block = null;
+    			}
+
+    			if (dirty & /*nameArr, jsVscode*/ 2) {
+    				each_value = /*nameArr*/ ctx[1];
     				let i;
 
     				for (i = 0; i < each_value.length; i += 1) {
@@ -396,7 +416,7 @@ var app = (function () {
     					} else {
     						each_blocks[i] = create_each_block(child_ctx);
     						each_blocks[i].c();
-    						each_blocks[i].m(t2.parentNode, t2);
+    						each_blocks[i].m(each_1_anchor.parentNode, each_1_anchor);
     					}
     				}
 
@@ -406,56 +426,62 @@ var app = (function () {
 
     				each_blocks.length = each_value.length;
     			}
-
-    			if (dirty & /*nameArr*/ 1 && t3_value !== (t3_value = JSON.stringify(/*nameArr*/ ctx[0], null, 2) + "")) set_data(t3, t3_value);
     		},
     		i: noop,
     		o: noop,
     		d(detaching) {
-    			if (detaching) detach(button);
-    			if (detaching) detach(t1);
+    			if (if_block) if_block.d(detaching);
+    			if (detaching) detach(t);
     			destroy_each(each_blocks, detaching);
-    			if (detaching) detach(t2);
-    			if (detaching) detach(p);
-    			mounted = false;
-    			dispose();
+    			if (detaching) detach(each_1_anchor);
     		}
     	};
     }
 
     function instance($$self, $$props, $$invalidate) {
+    	let idCount = 1;
     	let nameArr = [];
 
     	onMount(() => {
     		window.addEventListener("message", event => {
     			const message = event.data; //Json data
-    			console.log(message);
 
     			switch (message.type) {
     				case "new-function":
-    					$$invalidate(0, nameArr = [...nameArr, { name: message.value }]);
+    					$$invalidate(1, nameArr = [...nameArr, { name: message.value, id: idCount }]);
+    					$$invalidate(0, idCount++, idCount);
     					break;
     			}
     		});
     	});
 
-    	const click_handler = () => {
-    		//Ignore the error below its getting pulled through on a previous script
-    		//Could try bringing it through here though?
-    		jsVscode.postMessage({ type: "onInfo", value: " suck my balls " });
-    	};
-
-    	const click_handler_1 = i => {
-    		console.log(i);
+    	const click_handler = (name, i) => {
+    		const methodName = name.name;
+    		const realID = name.id;
 
     		if (i > -1) {
-    			nameArr.splice(i, 1);
-    			console.log(nameArr);
-    			$$invalidate(0, nameArr);
+    			try {
+    				//Update Backend
+    				jsVscode.postMessage({
+    					type: "onDelete",
+    					name: methodName,
+    					id: realID
+    				});
+
+    				//Update FrontEnd
+    				nameArr.splice(i, 1);
+
+    				$$invalidate(1, nameArr);
+    			} catch(error) {
+    				jsVscode.postMessage({
+    					type: "onError",
+    					value: "Failed To Remove Function"
+    				});
+    			}
     		}
     	};
 
-    	return [nameArr, click_handler, click_handler_1];
+    	return [idCount, nameArr, click_handler];
     }
 
     class MainPanel extends SvelteComponent {

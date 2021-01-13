@@ -1,5 +1,6 @@
 const vscode = require('vscode');
 const getNonce = require('./getNonce');
+const methodStorage = require('./storeMethods');
 
 class SidebarProvider {
   constructor(_extensionUri) {
@@ -27,6 +28,14 @@ class SidebarProvider {
             return;
           }
           vscode.window.showErrorMessage(data.value);
+          break;
+        }
+        case "onDelete":{
+          if(!data.name || !data.id){
+            return
+          }
+          methodStorage.findAndRemove(data.name,data.id);
+          console.log("Removed");
           break;
         }
       }

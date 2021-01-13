@@ -1,3 +1,8 @@
+/*
+	This is where we find the funciton in the active text editor.
+	Returns : StartLine, LastLine, FilePath and FunctionText
+*/
+
 const vscode = require('vscode');
 
 

@@ -2,6 +2,7 @@ const vscode = require('vscode');
 //const handleBox = require('./comp/handleBox');
 const findMethod = require('./comp/findMethod');
 const sidebarProvider = require('./comp/SideBarProvider');
+const methodStorage = require('./comp/storeMethods');
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
 
@@ -15,6 +16,7 @@ function activate(context) {
 
 	console.log('Congratulations, your extension "benchme" is now active!');
 
+	let methodCounter = 1;
 
 	context.subscriptions.push(vscode.commands.registerCommand('benchme.addCase', function () {
 		//handleBox.getInput("Tsot"); Can send stuff to other places!!!
@@ -23,12 +25,11 @@ function activate(context) {
 			const result = vscode.window.showInputBox({
 				ignoreFocusOut: true,
 				password: false,
-				placeHolder: 'Input Function Name',
+				placeHolder: 'Input Function Name On Active Text-Editor',
 			});
 
 			if (result) {
 				resolve(result);
-
 			} else {
 				reject("No Input!");
 				console.log("ERR!");
@@ -36,19 +37,28 @@ function activate(context) {
 		})
 
 		p.then((method) => {
+
+			//Check for active editor first and then reject if need be
+
+
 			findMethod.getInput(method);
+
+			//Sends to SideBar
 			var _a;
-		(_a = sbprov._view) === null || _a === void 0 ? void 0 : _a.webview.postMessage({
-			type: "new-function",
-      value: method,
-		})
+			(_a = sbprov._view) === null || _a === void 0 ? void 0 : _a.webview.postMessage({
+				type: "new-function",
+				value: method,
+			})
+
+			//Sends to storage to save
+			const methodInfo = new methodStorage.MethodObj(method,methodCounter,null,null,null,null);
+			methodStorage.pushToStore(methodInfo);
+			methodCounter++;
 		
 		}).catch((method) => {
 			vscode.window.showWarningMessage('Warning! Input not recieved');
 			console.log("ERROR " + method);
 		})
-
-
 
 	}));
 }
