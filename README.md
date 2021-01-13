@@ -1,12 +1,20 @@
-# benchme README
+# BenchMe README for Visual Studio Code
 
-This is the README for your extension "benchme". After writing up a brief description, we recommend including the following sections.
+A micro-benchmarking tool for developers with Live Programming aspects. Only supports JavaScript for now.
 
 ## Features
 
-Describe specific features of your extension including screenshots of your extension in action. Image paths are relative to this README file.
+Register a function an existing function in your code to our extension, any changes to it will be automatically updated.
 
-For example if there is an image subfolder under your extension project workspace:
+Compare multiple functions to eachother with our Benchmarking functionality which is built ontop of Benchmark.js, otherwise essentially known as JSPerf.
+
+Run your functions with any inputs you desire/require. It's all on you to ensure that you micro-benchmark correctly.
+
+However... we do help you along the way.
+
+
+-----
+I will update the rest of this later
 
 \!\[feature X\]\(images/feature-x.png\)
 
