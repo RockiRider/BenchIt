@@ -4,3 +4,6 @@ node_modules
 
 #Ignore compiled files below
 out/compiled/*
+
+# exception to the rule
+!out/compiled/.gitkeep 
