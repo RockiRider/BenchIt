@@ -1,3 +1,4 @@
+
 /*
   This is where we store all the Information of the function we are given
   Essentially our database
@@ -30,7 +31,6 @@ function findAndRemove(nameCheck,idCheck){
   const result = store.filter(data => data.name !== nameCheck && data.id !== idCheck);
   setStore(result);
 }
-
 
 // @ts-ignore
 exports.getStore = getStore;

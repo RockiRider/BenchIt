@@ -3,6 +3,7 @@ const vscode = require('vscode');
 const findMethod = require('./comp/findMethod');
 const sidebarProvider = require('./comp/SideBarProvider');
 const methodStorage = require('./comp/storeMethods');
+const mainDisplay = require('./comp/MainPanel');
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
 
@@ -54,6 +55,17 @@ function activate(context) {
 			const methodInfo = new methodStorage.MethodObj(method,methodCounter,null,null,null,null);
 			methodStorage.pushToStore(methodInfo);
 			methodCounter++;
+
+			//Pass in updated storage information
+			//const mainWebView = new mainDisplay.MainPanel(context.extensionUri);
+
+
+			//Display Web View
+			//mainDisplay.MainPanel.kill();
+			mainDisplay.MainPanel.createOrShow(context.extensionUri);
+
+
+			
 		
 		}).catch((method) => {
 			vscode.window.showWarningMessage('Warning! Input not recieved');
@@ -67,6 +79,8 @@ exports.activate = activate;
 
 // this method is called when your extension is deactivated
 function deactivate() {}
+
+
 
 module.exports = {
 	// @ts-ignore

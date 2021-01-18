@@ -1,5 +1,6 @@
 /*
 	This is where we find the funciton in the active text editor.
+	Checks if it exists and then proceeds
 	Returns : StartLine, LastLine, FilePath and FunctionText
 */
 
