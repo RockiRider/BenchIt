@@ -23,6 +23,7 @@ function setStore(inputArr){
   store = inputArr;
 }
 
+//Takes object and pushes it up to the array
 function pushToStore(input){
   store.push(input);
 }

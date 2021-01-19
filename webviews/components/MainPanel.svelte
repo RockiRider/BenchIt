@@ -1,6 +1,7 @@
 <script>
 import { onMount } from "svelte";
 
+  //Bug!! = Doesnt load saved data!!! Needs to retain information!
 
   let idCount = 1;
   let nameArr = [];
@@ -11,7 +12,7 @@ import { onMount } from "svelte";
 
       switch(message.type){
         case "new-function": 
-          nameArr = [...nameArr,{name: message.value,id:idCount}];
+          nameArr = [...nameArr,{name: message.value.name,id:message.value.id}];
           idCount++;
         break;
       }

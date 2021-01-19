@@ -1,6 +1,7 @@
 const vscode = require('vscode');
 const getNonce = require('./getNonce');
 const methodStorage = require('./storeMethods');
+const mainDisplay = require('./MainPanel');
 
 class SidebarProvider {
   constructor(_extensionUri) {
@@ -35,6 +36,7 @@ class SidebarProvider {
             return
           }
           methodStorage.findAndRemove(data.name,data.id);
+          mainDisplay.MainPanel.currentPanel._panel.webview.postMessage({type: 'onDelete',data:{name:data.name,id:data.id}});
           console.log("Removed");
           break;
         }
