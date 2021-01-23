@@ -1,14 +1,23 @@
 <script>
     import { onMount } from "svelte";
-    
-    /*
-      Bug!!! = When switching views, all data disapears
-    */
+
     
       let mainArr = [];
       let currentText = '';
     
       onMount(()=>{
+
+        const previousState = jsVscode.getState();
+
+
+        //Used for saving the state
+        if(previousState !== undefined){
+          console.log(previousState);
+          mainArr = previousState.saved;
+        }
+
+
+
         window.addEventListener("message",(event) =>{
           const message = event.data //Json data
           switch(message.type){
@@ -21,17 +30,30 @@
                 path:message.data.fsPath, 
                 text: message.data.text
               }];
+              jsVscode.setState({saved: mainArr});
+              
+              //syncUp(message.data);
             break;
             case "load-save":
               mainArr = message.data;
+              jsVscode.setState({saved: mainArr});
             break;
             case "onDelete":
+              const textIsCurrent = mainArr.some((data) => {
+                return data.text == currentText && data.id == message.data.id
+              })
+              if(textIsCurrent){
+                currentText = '';
+              }
               const newArr = mainArr.filter(data => data.name !== message.data.name && data.id !==  message.data.id);
               mainArr = newArr;
+              jsVscode.setState({saved: mainArr});
             break;
           }
         })
       })
+
+      
     
 </script>
 

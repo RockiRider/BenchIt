@@ -10,6 +10,10 @@ const fs = require('fs');
 
 function getMethodData(functionName,activeDoc) {
 
+	if(functionName ===''){
+		return 'Error';
+	}
+
 	const path = activeDoc.document.uri.fsPath;
 	const location = getLocation(functionName,path);
 

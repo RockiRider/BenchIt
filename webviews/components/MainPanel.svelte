@@ -1,12 +1,22 @@
 <script>
 import { onMount } from "svelte";
+//const methodStorage = require('../../src/comp/storeMethods');
 
-  //Bug!! = Doesnt load saved data!!! Needs to retain information!
+
+  //Bug!! = Doesnt sync information from WebView (If Sidebar not opened yet!)
+  //Once its open its fine
 
   let idCount = 1;
   let nameArr = [];
+  let mainData = [];
 
   onMount(()=>{
+
+    const previousState = jsVscode.getState();
+    if(previousState){
+          console.log(previousState.list);
+          nameArr = previousState.list;
+    }
     window.addEventListener("message",(event) =>{
       const message = event.data //Json data
 
@@ -14,6 +24,7 @@ import { onMount } from "svelte";
         case "new-function": 
           nameArr = [...nameArr,{name: message.value.name,id:message.value.id}];
           idCount++;
+          jsVscode.setState({list: nameArr});
         break;
       }
     })
@@ -70,7 +81,8 @@ import { onMount } from "svelte";
             })
             //Update FrontEnd
             nameArr.splice(i, 1);
-            nameArr = nameArr;  
+            nameArr = nameArr;
+            jsVscode.setState({list: nameArr});
           } catch (error) {
             jsVscode.postMessage({
               type: "onError",

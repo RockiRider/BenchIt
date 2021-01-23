@@ -47,10 +47,8 @@ class SidebarProvider {
     this._view = panel;
   }
   _getHtmlForWebview(webview) {
-    const styleResetUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, "assets", "reset.css"));
     const scriptUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, "out", "compiled/MainPanel.js"));
     const styleMainUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, "out", "compiled/MainPanel.css"));
-    const styleVSCodeUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, "assets", "vscode.css"));
     // Use a nonce to only allow a specific script to be run.
     const nonce = getNonce.getNonce();
     return `<!DOCTYPE html>
@@ -62,8 +60,6 @@ class SidebarProvider {
                       and only allow scripts that have a specific nonce.
                   -->
                   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                  <link href="${styleResetUri}" rel="stylesheet">
-                  <link href="${styleVSCodeUri}" rel="stylesheet">
                   <link href="${styleMainUri}" rel="stylesheet">
                   <script nonce="${nonce}">
                     const jsVscode = acquireVsCodeApi();
@@ -78,6 +74,7 @@ class SidebarProvider {
 }
 // @ts-ignore
 //exports.getNonce = getNonce;
+SidebarProvider._view = undefined;
 
 module.exports = {
   // @ts-ignore

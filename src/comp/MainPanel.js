@@ -1,6 +1,7 @@
 const vscode = require('vscode');
 const getNonce = require('./getNonce');
 const closeViewTracker = require('./closeCounter');
+//const sidebar = require('./SideBarProvider');
 
 
 class MainPanel {
@@ -28,6 +29,7 @@ class MainPanel {
             return;
         }
         // Otherwise, create a new panel.
+        console.log("Creating New Panel!");
         const panel = vscode.window.createWebviewPanel(MainPanel.viewType, "BenchMe", column || vscode.ViewColumn.One, {
             // Enable javascript in the webview
             enableScripts: true,
@@ -45,11 +47,12 @@ class MainPanel {
         (_a = MainPanel.currentPanel) === null || _a === void 0 ? void 0 : _a.dispose();
         MainPanel.currentPanel = undefined;
     }
+    static handleSwitch(){
+        MainPanel.currentPanel._update();
+    }
     static revive(panel, extensionUri) {
         MainPanel.currentPanel = new MainPanel(panel, extensionUri);
     }
-
-    
 
     dispose() {
         MainPanel.currentPanel = undefined;
@@ -67,6 +70,24 @@ class MainPanel {
         this._panel.webview.html = this._getHtmlForWebview(webview);
         webview.onDidReceiveMessage(async (data) => {
             switch (data.type) {
+                case "firstSync": {
+                    if (!data.value) {
+                        return;
+                    }
+                    //sidebar.SidebarProvider.
+                    /*
+                    var _a;
+					(_a = sidebar.SidebarProvider._view) === null || _a === void 0 ? void 0 : _a.webview.postMessage({
+						type: "new-function",
+						value: {
+							name: data.value.name,
+							id: data.value.id
+						},
+                    })
+                    */
+                    console.log("Sync HERE!");
+                    break;
+                }
                 case "onInfo": {
                     if (!data.value) {
                         return;
