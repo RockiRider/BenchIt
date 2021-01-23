@@ -2,9 +2,11 @@
 
 A micro-benchmarking tool for developers with Live Programming aspects. Only supports JavaScript for now.
 
+## This is still in Development!
+
 ## Features
 
-Register a function an existing function in your code to our extension, any changes to it will be automatically updated.
+Register an existing function in your code to our extension, any changes to it will be automatically updated.
 
 Compare multiple functions to eachother with our Benchmarking functionality which is built ontop of Benchmark.js, otherwise essentially known as JSPerf.
 
