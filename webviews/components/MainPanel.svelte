@@ -68,6 +68,7 @@ import { onMount } from "svelte";
       <h4>{name.name}</h4>
     </div>
     <div class="btnArea">
+      <!-- svelte-ignore missing-declaration -->
       <button on:click={() =>{
         const methodName = name.name;
         const realID = name.id;

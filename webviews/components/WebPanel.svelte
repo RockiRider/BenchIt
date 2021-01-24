@@ -1,7 +1,37 @@
+
+
+<svelte:head>
+  <title>Plotly</title>
+  <meta name="description" content="">
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+
+</svelte:head>
+
 <script>
     import { onMount } from "svelte";
-
+    //Plotly Stuff
+    let trace1 = {
+      x: ['Function 1', 'Function 2', 'Function 3'],
+      y: [3, 6, 4],
+      name: 'Control',
+      error_y: {
+          type: 'data',
+          array: [1, 0.5, 1.5],
+          visible: true
+      },
+      type: 'bar'
+    };
+    let data = [trace1]
+    let layout = {
+        title: 'Benchmark Results',
+        font: {
+            size: 18
+        },
+        //barmode: 'stack',
+        autosize: true // set autosize to rescale
+    };
     
+      //Data Stuff
       let mainArr = [];
       let currentText = '';
     
@@ -16,8 +46,14 @@
           mainArr = previousState.saved;
         }
 
+        let script = document.createElement('script');
+        script.src = "https://cdn.plot.ly/plotly-latest.min.js"
+        document.head.append(script);
 
-
+        script.onload = function() {
+            Plotly.newPlot('myPlot', data, layout, {showSendToCloud:true});
+        };
+ 
         window.addEventListener("message",(event) =>{
           const message = event.data //Json data
           switch(message.type){
@@ -52,9 +88,8 @@
           }
         })
       })
-
       
-    
+
 </script>
 
 <style>
@@ -181,6 +216,6 @@
     <pre id="functionText">{currentText}</pre>
   </div>
 </div>
-<canvas id="myChart"></canvas>
+<div id="myPlot"></div>
 
 <p>{JSON.stringify(mainArr,null,2)}</p>

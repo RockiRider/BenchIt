@@ -126,7 +126,7 @@ function activate(context) {
 						vscode.window.showWarningMessage('Error! Function not found!');
 						console.log("ERROR ON " + errorMsg);
 					})
-				}, 50);
+				}, 100);
 
 			}).catch((errorMsg) => {
 				//Active Editor Not found
