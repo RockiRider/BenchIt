@@ -6,13 +6,10 @@
 </svelte:head>
 
 <script>
-/**
- * Not Using this anymore, however useful for WebView Template if required!
- */
-
-
     import { onMount } from "svelte";
 
+    const socket = new WebSocket('ws://localhost:52999');
+    //const sharedWorker = require('./sharedWork');
     //Plotly Stuff
     let trace1 = {
       x: ['Function 1', 'Function 2', 'Function 3'],
@@ -39,27 +36,9 @@
       let mainArr = [];
       let currentText = '';
 
-
-      var blob = new Blob(Array.prototype.map.call(document.querySelectorAll(
-            'script[type=\'text\/js-worker\']'), function (oScript) {
-            return oScript.textContent;
-        }), {
-            type: 'text/javascript'
-        });
-
-        // Creating a new document.worker property containing all our "text/js-worker" scripts.
-        let something = new Worker(window.URL.createObjectURL(blob));
-    
-     
-      onMount(()=>{
-        //TODO: Should get from store as well!
-        const previousState = jsVscode.getState();
-
-        //Used for saving the state
-        if(previousState !== undefined){
-          console.log(previousState);
-          mainArr = previousState.saved;
-        }
+    const worker = new Worker('sharedWork.js');
+    onMount(()=>{
+       
         //Double loading??
         let script = document.createElement('script');
         script.src = "https://cdn.plot.ly/plotly-latest.min.js"
@@ -71,72 +50,58 @@
             Plotly.newPlot('myPlot', data, layout, {showSendToCloud:true});
         };
 
- 
-        window.addEventListener("message",(event) =>{
-          const message = event.data //Json data
-          switch(message.type){
-            case "new-function":
-              mainArr = [...mainArr,{
-                name: message.data.name, 
-                id:message.data.id, 
-                start: message.data.start,
-                finish:message.data.finish, 
-                path:message.data.fsPath, 
-                text: message.data.text
-              }];
-              jsVscode.setState({saved: mainArr});
-              
-              //syncUp(message.data);
-            break;
-            case "load-save":
-              mainArr = message.data;
-              jsVscode.setState({saved: mainArr});
-            break;
-            case "onDelete":
-              const textIsCurrent = mainArr.some((data) => {
-                return data.text == currentText && data.id == message.data.id
-              })
-              if(textIsCurrent){
-                currentText = '';
-              }
-              const newArr = mainArr.filter(data => data.name !== message.data.name && data.id !==  message.data.id);
-              mainArr = newArr;
-              jsVscode.setState({saved: mainArr});
-            break;
-          }
-        })
-      })
-      
-      function callWorker(){
-        //jsVscode.postMessage({type: "benchmark",value: "Lets See"})
-        //console.log("call!");
-
-        
-        let methods = [];
-        methods = mainArr.map( el => {
-          const text = el.text;
-          let temp = 'console.log("suck my balls");';
-          let name = 'fun'+el.id;
-          //TODO: Actual code inside the function as string to create a new function and slot it into the object!
-          var fun = new Function(temp);
-
-          const obj = {[name]: fun, params: 0};
-          return obj;
+        socket.addEventListener('open', function (event) {
+            // Connection opened
+            socket.send('requesting');
         });
-        console.log(methods);
-        //Only works for void functions careful not to return anything!
-       //methods[0].fun1();
 
-       
-        //something.postMessage('');
-      }
+        socket.addEventListener('message', function (event) {
+            const message = JSON.parse(event.data);
+            switch(message.type){
+                case "new-function":
+                    mainArr = [...mainArr,{
+                    name: message.data.name, 
+                    id:message.data.id, 
+                    start: message.data.start,
+                    finish:message.data.finish, 
+                    path:message.data.fsPath, 
+                    text: message.data.text
+                }];
+                
+                //syncUp(message.data);
+                break;
+                case "load-save":
+                    mainArr = message.data;
+                break;
+                case "onDelete":
+                    const textIsCurrent = mainArr.some((data) => {
+                        return data.text == currentText && data.id == message.data.id
+                    })
+                    if(textIsCurrent){
+                        currentText = '';
+                    }
+                    const newArr = mainArr.filter(data => data.name !== message.data.name && data.id !==  message.data.id);
+                    mainArr = newArr;
+                break;
+            }
+        });
+    });
+
+
       
-      something.onmessage = function (oEvent) {
-            let benchmarkResults = JSON.parse(oEvent.data);
-            console.log(benchmarkResults);
-            
-      };
+    function callWorker(){
+        worker.postMessage(JSON.stringify({allMethods:mainArr})); 
+    }
 
+    worker.onmessage = function(e) {
+        let msg = e.data;
+        alert('Results are here!');
+        console.log(msg);
+    }
+
+    function findText(input){
+        
+    }
 </script>
 
 
@@ -239,7 +204,7 @@
       background-color: #331E38;
   }
 
-  canvas {
+  #myPlot {
       max-width: 1300px;
       padding-left: 3%;
       padding-right: 3%;

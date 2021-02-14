@@ -25,6 +25,7 @@ export default fs
       plugins: [
         svelte({
           // enable run-time checks when not in production
+          // @ts-ignore
           dev: !production,
           // we'll extract any component CSS out into
           // a separate file - better for performance
@@ -49,6 +50,7 @@ export default fs
           // Callback that will be called ongenerate with two arguments:
           // - styles: the contents of all style tags combined: 'body { color: green }'
           // - styleNodes: an array of style objects: [{lang: 'css', content: 'body { color: green }'}]
+          // @ts-ignore
           output: function (styles, styleNodes) {
               fs.writeFileSync('out/compiled/'+name+'.css', styles);
           }}),

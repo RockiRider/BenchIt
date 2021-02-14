@@ -6,4 +6,5 @@ node_modules
 out/compiled/*
 
 # exception to the rule
-!out/compiled/.gitkeep 
+!out/compiled/worker.js 
+!out/compiled/.gitkeep

@@ -1,7 +1,7 @@
 const vscode = require('vscode');
 const getNonce = require('./getNonce');
 const methodStorage = require('./storeMethods');
-const mainDisplay = require('./MainPanel');
+const {instance} = require('./objController/serverInstance');
 
 class SidebarProvider {
   constructor(_extensionUri) {
@@ -36,7 +36,11 @@ class SidebarProvider {
             return
           }
           methodStorage.findAndRemove(data.name,data.id);
-          mainDisplay.MainPanel.currentPanel._panel.webview.postMessage({type: 'onDelete',data:{name:data.name,id:data.id}});
+          //mainDisplay.MainPanel.currentPanel._panel.webview.postMessage({type: 'onDelete',data:{name:data.name,id:data.id}});
+          //TODO: On Delete to Server!mainExtension
+
+          //mainExtension.sendServerMsg({type: 'onDelete',data:{name:data.name,id:data.id}});
+          instance.handleMsg({type: 'onDelete',data:{name:data.name,id:data.id}});
           console.log("Removed");
           break;
         }

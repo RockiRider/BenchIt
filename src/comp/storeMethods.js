@@ -15,19 +15,38 @@ function MethodObj(inName, inId, inStart, inFinsih, inPath, inText) {
   this.text = inText;
 }
 
+
+/**
+ * Returns Array of Method Objects
+ */
 function getStore(){
   return store;
 }
 
+/**
+ * Takes an Array and Replaces the Current Store
+ * @param {Array} inputArr 
+ */
 function setStore(inputArr){
   store = inputArr;
 }
 
-//Takes object and pushes it up to the array
+
+/**
+ * Takes object and pushes it up to the array
+ * @param {Object} input 
+ */
 function pushToStore(input){
   store.push(input);
 }
 
+
+
+/**
+ * Finds and removes an Object from the Store 
+ * @param {string} nameCheck 
+ * @param {Number} idCheck 
+ */
 function findAndRemove(nameCheck,idCheck){
   const result = store.filter(data => data.name !== nameCheck && data.id !== idCheck);
   setStore(result);
