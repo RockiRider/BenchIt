@@ -10,31 +10,21 @@
 
     const socket = new WebSocket('ws://localhost:52999');
     //const sharedWorker = require('./sharedWork');
-    //Plotly Stuff
-    let trace1 = {
-      x: ['Function 1', 'Function 2', 'Function 3'],
-      y: [3, 6, 4],
-      name: 'Control',
-      error_y: {
-          type: 'data',
-          array: [1, 0.5, 1.5],
-          visible: true
-      },
-      type: 'bar'
-    };
-    let data = [trace1]
-    let layout = {
-        title: 'Benchmark Results',
-        font: {
-            size: 18
-        },
-        //barmode: 'stack',
-        autosize: true // set autosize to rescale
-    };
     
-      //Data Stuff
-      let mainArr = [];
-      let currentText = '';
+    //Data Stuff
+    let mainArr = [];
+    let currentText = '';
+    let benchResults = [];
+    let resultState = '';
+
+    //Plot Data
+
+    let dataPoints = {
+        x: [],
+        y: [],
+        error:[],
+        color: ['#8D3B72', '#2c1b8f','#89A7A7','#06584c','#8b0955','#2B3D41','#4C5F6B','#83A0A0','#706993','#331E38']    //TODO: Dynamic colours!
+    }
 
     const worker = new Worker('sharedWork.js');
     onMount(()=>{
@@ -45,11 +35,12 @@
         document.head.append(script);
 
         
-
+        /*
         script.onload = function() {
-            Plotly.newPlot('myPlot', data, layout, {showSendToCloud:true});
+            createPlot();
         };
-
+        */
+        
         socket.addEventListener('open', function (event) {
             // Connection opened
             socket.send('requesting');
@@ -86,21 +77,61 @@
             }
         });
     });
-
-
-      
+ 
     function callWorker(){
+        resultState = 'Loading ...';
         worker.postMessage(JSON.stringify({allMethods:mainArr})); 
     }
 
     worker.onmessage = function(e) {
-        let msg = e.data;
-        alert('Results are here!');
+        let msg = JSON.parse(e.data);
         console.log(msg);
+        resultState = msg.result.join(' , ');
+        benchResults = msg.stats;
+        updateGraphData();
     }
 
-    function findText(input){
-        
+    function updateGraphData(){
+        if(mainArr.length !== benchResults.length){
+            alert('Error function added/removed during benchmarking!');
+            return;
+        }
+        console.log(benchResults);
+        for(let i = 0; i<benchResults.length;i++){
+            let element = mainArr[i];
+            let resulting = benchResults[i];
+            dataPoints.x.push(element.name);
+            dataPoints.y.push(resulting.ops);
+            dataPoints.error.push(resulting.rme);
+        }
+        createPlot();   //Update Plot!
+    }
+
+    function createPlot(){
+        //Plotly Stuff
+        const trace1 = {
+        x: dataPoints.x,
+        y: dataPoints.y,
+        name: 'Control',
+        marker:{color: dataPoints.color},  //Store colour and 
+        error_y: {
+            type: 'data',
+            array: dataPoints.error,
+            visible: true,
+            marker:{color: 'red'}
+        },
+        type: 'bar'
+        };
+        let data = [trace1]
+        let layout = {
+            title: 'Benchmark Results',
+            font: {
+                size: 18
+            },
+            //barmode: 'stack',
+            autosize: true // set autosize to rescale
+        };
+        Plotly.newPlot('myPlot', data, layout, {showSendToCloud:true});
     }
 </script>
 
@@ -115,7 +146,11 @@
   #viewTitle {
       text-align: center;
   }
-
+  .resultsArea{
+      display: flex;
+      justify-content: center;
+      text-align: center;
+  }
   .inputArea {
       width: 100%;
       position: relative;
@@ -134,8 +169,7 @@
       border-color: #111;
       padding-left: 20px;
       padding-right: 20px;
-      border-top-right-radius: 25px;
-      border-bottom-right-radius: 25px;
+      border-radius: 20px;
   }
 
   .btnArea {
@@ -167,7 +201,7 @@
   #fun1 {
       background-color: #8D3B72;
   }
-
+  
   #fun2 {
       background-color: #2c1b8f;
   }
@@ -213,9 +247,9 @@
 
 <h1 id="viewTitle">Live View</h1>
 <div class="inputArea">
-  <input type="number" value="1" id="numOfRuns" name="quantity" min="1" max="100">
   <button on:click={callWorker} id="mainbtn">Test Performance</button>
 </div>
+<div class="resultsArea"><h4>{resultState}</h4></div>
 <div id="btnArea" class="btnArea">
   {#each mainArr as section,i}
     <button type="button" on:click={() =>{
@@ -230,5 +264,3 @@
   </div>
 </div>
 <div id="myPlot"></div>
-
-<p>{JSON.stringify(mainArr,null,2)}</p>

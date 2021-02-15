@@ -13,6 +13,8 @@ function MethodObj(inName, inId, inStart, inFinsih, inPath, inText) {
   this.finish = inFinsih;
   this.fsPath = inPath;
   this.text = inText;
+
+  //We should store colour and results too!
 }
 
 
