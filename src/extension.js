@@ -27,7 +27,7 @@ let browserOpened = false;
 function activate(context) {
 	
 	const sbprov = new sidebarProvider.SidebarProvider(context.extensionUri);
-	context.subscriptions.push(vscode.window.registerWebviewViewProvider("benchMe_sidebar", sbprov));
+	context.subscriptions.push(vscode.window.registerWebviewViewProvider("benchIt_sidebar", sbprov));
 	instance.createServer();
 	
 
@@ -37,7 +37,7 @@ function activate(context) {
 
 	let methodCounter = 1;
 
-	context.subscriptions.push(vscode.commands.registerCommand('benchme.addCase', function () {
+	context.subscriptions.push(vscode.commands.registerCommand('benchIt.addCase', function () {
 
 		let inputBox = new Promise((resolve, reject) => {
 			const result = vscode.window.showInputBox({

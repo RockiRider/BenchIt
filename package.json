@@ -11,24 +11,24 @@
 	],
 	"activationEvents": [
 		"*",
-		"onView:benchMe_sidebar"
+		"onView:benchIt_sidebar"
 	],
 	"main": "./src/extension.js",
 	"contributes": {
 		"viewsContainers": {
 			"activitybar": [
 				{
-					"id": "benchMe_sidebar_view",
+					"id": "benchIt_sidebar_view",
 					"title": "BenchIt",
 					"icon": "assets/imgs/icon.svg"
 				}
 			]
 		},
 		"views": {
-			"benchMe_sidebar_view": [
+			"benchIt_sidebar_view": [
 				{
 					"type": "webview",
-					"id": "benchMe_sidebar",
+					"id": "benchIt_sidebar",
 					"name": "BenchIt",
 					"icon": "assets/imgs/icon.svg",
 					"contextualTitle": "BenchIt"
@@ -37,7 +37,7 @@
 		},
 		"commands": [
 			{
-				"command": "benchme.addCase",
+				"command": "benchIt.addCase",
 				"category": "BenchIt",
 				"title": "Add Case"
 			}

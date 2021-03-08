@@ -25,7 +25,7 @@ class ResultsPanel {
          return `<!DOCTYPE html>
      <html lang="en">
        <head>
-       <title>BenchMe</title>
+       <title>BenchIt</title>
            <meta charset="UTF-8">
            <!--
                Use a content security policy to only allow loading images from https or from our extension directory,
