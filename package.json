@@ -1,6 +1,6 @@
 {
-	"name": "benchme",
-	"displayName": "BenchMe",
+	"name": "benchit",
+	"displayName": "BenchIt",
 	"description": "A Live Programming Micro Benchmarking Tool",
 	"version": "0.0.1",
 	"engines": {
@@ -19,7 +19,7 @@
 			"activitybar": [
 				{
 					"id": "benchMe_sidebar_view",
-					"title": "BenchMe",
+					"title": "BenchIt",
 					"icon": "assets/imgs/icon.svg"
 				}
 			]
@@ -29,16 +29,16 @@
 				{
 					"type": "webview",
 					"id": "benchMe_sidebar",
-					"name": "BenchMe",
+					"name": "BenchIt",
 					"icon": "assets/imgs/icon.svg",
-					"contextualTitle": "BenchMe"
+					"contextualTitle": "BenchIt"
 				}
 			]
 		},
 		"commands": [
 			{
 				"command": "benchme.addCase",
-				"category": "BenchMe",
+				"category": "BenchIt",
 				"title": "Add Case"
 			}
 		]
