@@ -115,7 +115,7 @@
         name: 'Control',
         marker:{color: dataPoints.color},  //Store colour and 
         error_y: {
-            type: 'data',
+            type: 'percent',
             array: dataPoints.error,
             visible: true,
             marker:{color: 'red'}
@@ -131,7 +131,7 @@
             //barmode: 'stack',
             autosize: true // set autosize to rescale
         };
-        Plotly.newPlot('myPlot', data, layout, {showSendToCloud:true});
+        Plotly.newPlot('myPlot', data, layout, {showSendToCloud:false});
     }
 </script>
 
