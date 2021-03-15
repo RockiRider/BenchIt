@@ -93,6 +93,14 @@ function activate(context) {
 						//Function is found from here! Start the server!
 						console.log(data);
 
+
+
+						//Sends to storage to save
+						const methodInfo = new methodStorage.MethodObj(method, methodCounter, data.start, data.finish, data.filePath, data.text);
+						methodStorage.pushToStore(methodInfo);
+						methodCounter++;
+
+
 						//Sending to Sidebar
 						var _a;
 						(_a = sbprov._view) === null || _a === void 0 ? void 0 : _a.webview.postMessage({
@@ -103,10 +111,6 @@ function activate(context) {
 							},
 						})
 
-						//Sends to storage to save
-						const methodInfo = new methodStorage.MethodObj(method, methodCounter, data.start, data.finish, data.filePath, data.text);
-						methodStorage.pushToStore(methodInfo);
-						methodCounter++;
 
 						if(browserOpened){
 							instance.handleMsg({type: 'new-function',data: methodInfo});

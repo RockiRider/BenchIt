@@ -37,7 +37,7 @@ function setStore(inputArr){
  * @param {Object} input 
  */
 function pushToStore(input){
-  const newSide = side.SideBarObj(input.name,input.id);
+  let newSide = new side.SideBarObj(input.name,input.id);
   side.pushToStore(newSide);
   store.push(input);
 }

@@ -1,6 +1,7 @@
 const vscode = require('vscode');
 const getNonce = require('./getNonce');
 const methodStorage = require('./storage/storeMethods');
+const sidebarStorage = require('./storage/sideMethods');
 const {instance} = require('./objController/serverInstance');
 const openDefault = require('./browserController/openDefault');
 
@@ -18,6 +19,11 @@ class SidebarProvider {
     webviewView.webview.html = this._getHtmlForWebview(webviewView.webview);
     webviewView.webview.onDidReceiveMessage(async (data) => {
       switch (data.type) {
+        case "onMount": {
+          const currentVal  = sidebarStorage.getStore();
+          this._view.webview.postMessage({type: "load-save",value: currentVal})
+          break;
+        }
         case "openBrowser": {
           openDefault.openDefaultBrowser();
           break;

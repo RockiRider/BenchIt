@@ -1,6 +1,6 @@
 <script>
 import { onMount } from "svelte";
-const methodStorage = require('../../src/comp/storage/sideMethods');
+import methodStorage from '../../src/comp/storage/sideMethods';
 
 
   //Bug!! = Doesnt sync information from WebView (If Sidebar not opened yet!)
@@ -12,20 +12,28 @@ const methodStorage = require('../../src/comp/storage/sideMethods');
 
   onMount(()=>{
 
+    
+    jsVscode.postMessage({type: "onMount"});
+    /*
     const previousState = jsVscode.getState();
     if(previousState){
           console.log(previousState.list);
           nameArr = previousState.list;
     }
+    */
     window.addEventListener("message",(event) =>{
       const message = event.data //Json data
 
       switch(message.type){
-        case "new-function": 
+        case "new-function":{
           nameArr = [...nameArr,{name: message.value.name,id:message.value.id}];
           idCount++;
-          jsVscode.setState({list: nameArr});
         break;
+        }     
+        case "load-save":{
+          nameArr = message.value;
+          nameArr = nameArr;
+        }
       }
     })
   })
@@ -110,7 +118,6 @@ const methodStorage = require('../../src/comp/storage/sideMethods');
             //Update FrontEnd
             nameArr.splice(i, 1);
             nameArr = nameArr;
-            jsVscode.setState({list: nameArr});
           } catch (error) {
             jsVscode.postMessage({
               type: "onError",
@@ -122,3 +129,4 @@ const methodStorage = require('../../src/comp/storage/sideMethods');
     </div>
   </div>
 {/each}
+<p>{JSON.stringify(nameArr,null,2)}</p>
