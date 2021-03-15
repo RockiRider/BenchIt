@@ -1,6 +1,6 @@
 <script>
 import { onMount } from "svelte";
-//const methodStorage = require('../../src/comp/storeMethods');
+const methodStorage = require('../../src/comp/storage/sideMethods');
 
 
   //Bug!! = Doesnt sync information from WebView (If Sidebar not opened yet!)
@@ -34,6 +34,26 @@ import { onMount } from "svelte";
 
 
 <style>
+  .topArea{
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+  }
+  .topArea h1{
+    margin-top: 0;
+    margin-bottom: 0;
+  }
+  .topArea button{
+    background-color: #034cbb;
+    border: none;
+    color: white;
+    padding: 5px 5px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 12px;
+    cursor: pointer;
+  }
   .boxArea{
     display: flex;
     width:100%;
@@ -60,7 +80,14 @@ import { onMount } from "svelte";
   }
 
 </style>
-
+<div class="topArea">
+  <h1>Tracked Functions</h1>
+  <!-- svelte-ignore missing-declaration -->
+  <button on:click={() =>{
+    //Open Browser
+    jsVscode.postMessage({type: "openBrowser"});
+  }}>Open Browser</button>
+</div>
 {#if idCount < 2}<h3>Use the addCase command to track functions</h3>{/if}
 {#each nameArr as name,i}
   <div class="boxArea">

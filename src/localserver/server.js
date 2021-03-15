@@ -3,7 +3,7 @@ const path = require('path');
 const http = require("http");
 const WebSocket = require('ws');
 const event = require('events');
-const store = require('../comp/storeMethods');
+const store = require('../comp/storage/storeMethods');
 
 // @ts-ignore
 const ee = new event.EventEmitter();

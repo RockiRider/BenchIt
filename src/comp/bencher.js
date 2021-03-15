@@ -1,5 +1,5 @@
 const Benchmark = require('benchmark');
-const store = require('./storeMethods');
+const store = require('./storage/storeMethods');
 let methods = [];
 
 

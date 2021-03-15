@@ -1,4 +1,4 @@
-
+const side = require('./sideMethods');
 /*
   This is where we store all the Information of the function we are given
   Essentially our database
@@ -17,7 +17,6 @@ function MethodObj(inName, inId, inStart, inFinsih, inPath, inText) {
   //We should store colour and results too!
 }
 
-
 /**
  * Returns Array of Method Objects
  */
@@ -33,16 +32,15 @@ function setStore(inputArr){
   store = inputArr;
 }
 
-
 /**
  * Takes object and pushes it up to the array
  * @param {Object} input 
  */
 function pushToStore(input){
+  const newSide = side.SideBarObj(input.name,input.id);
+  side.pushToStore(newSide);
   store.push(input);
 }
-
-
 
 /**
  * Finds and removes an Object from the Store 
@@ -51,6 +49,7 @@ function pushToStore(input){
  */
 function findAndRemove(nameCheck,idCheck){
   const result = store.filter(data => data.name !== nameCheck && data.id !== idCheck);
+  side.findAndRemove(nameCheck,idCheck);
   setStore(result);
 }
 

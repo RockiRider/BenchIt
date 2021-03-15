@@ -1,43 +1,41 @@
 {
 	"name": "benchit",
 	"displayName": "BenchIt",
-	"description": "A Live Programming Micro Benchmarking Tool",
+	"description": "A Live Example-Based Micro Benchmarking Tool",
 	"version": "0.0.1",
+	"publisher": "Tsotne",
 	"engines": {
-		"vscode": "^1.52.0"
+		"vscode": "^1.54.0"
 	},
 	"categories": [
 		"Other"
 	],
 	"activationEvents": [
-		"*",
-		"onView:benchIt_sidebar"
+		"*"
 	],
 	"main": "./src/extension.js",
 	"contributes": {
 		"viewsContainers": {
 			"activitybar": [
 				{
-					"id": "benchIt_sidebar_view",
+					"id": "bench-it-sidebar-view",
 					"title": "BenchIt",
-					"icon": "assets/imgs/icon.svg"
+					"icon": "assets/mainLogo.svg"
 				}
 			]
 		},
 		"views": {
-			"benchIt_sidebar_view": [
+			"bench-it-sidebar-view": [
 				{
 					"type": "webview",
-					"id": "benchIt_sidebar",
-					"name": "BenchIt",
-					"icon": "assets/imgs/icon.svg",
-					"contextualTitle": "BenchIt"
+					"id": "bench-it-sidebar",
+					"name": "BenchIt"
 				}
 			]
 		},
 		"commands": [
 			{
-				"command": "benchIt.addCase",
+				"command": "benchit.addCase",
 				"category": "BenchIt",
 				"title": "Add Case"
 			}

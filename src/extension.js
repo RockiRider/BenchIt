@@ -1,7 +1,7 @@
 const vscode = require('vscode');
 const findMethod = require('./comp/findMethod');
 const sidebarProvider = require('./comp/SideBarProvider');
-const methodStorage = require('./comp/storeMethods');
+const methodStorage = require('./comp/storage/storeMethods');
 //const mainDisplay = require('./comp/MainPanel');
 //const closeViewTracker = require('./comp/closeCounter');
 
@@ -27,17 +27,17 @@ let browserOpened = false;
 function activate(context) {
 	
 	const sbprov = new sidebarProvider.SidebarProvider(context.extensionUri);
-	context.subscriptions.push(vscode.window.registerWebviewViewProvider("benchIt_sidebar", sbprov));
+	context.subscriptions.push(vscode.window.registerWebviewViewProvider("bench-it-sidebar", sbprov));
 	instance.createServer();
 	
 
 	//currentServer = nodeServer;
 
-	console.log('Congratulations, your extension "benchme" is now active!');
+	console.log('Congratulations, your extension "benchIt" is now active!');
 
 	let methodCounter = 1;
 
-	context.subscriptions.push(vscode.commands.registerCommand('benchIt.addCase', function () {
+	context.subscriptions.push(vscode.commands.registerCommand('benchit.addCase', function () {
 
 		let inputBox = new Promise((resolve, reject) => {
 			const result = vscode.window.showInputBox({
@@ -86,7 +86,7 @@ function activate(context) {
 			activeEd.then((foundEditor) => {
 
 				//Wait for SideBar to activate so the new Function is registered here too!
-				vscode.commands.executeCommand('workbench.view.extension.benchMe_sidebar_view');
+				vscode.commands.executeCommand('workbench.view.extension.bench-it-sidebar-view');
 				setTimeout(function(){ 
 					 
 					findFunction(method, foundEditor).then((data) => {

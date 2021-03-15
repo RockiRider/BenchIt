@@ -1,7 +1,8 @@
 const vscode = require('vscode');
 const getNonce = require('./getNonce');
-const methodStorage = require('./storeMethods');
+const methodStorage = require('./storage/storeMethods');
 const {instance} = require('./objController/serverInstance');
+const openDefault = require('./browserController/openDefault');
 
 class SidebarProvider {
   constructor(_extensionUri) {
@@ -12,11 +13,15 @@ class SidebarProvider {
     webviewView.webview.options = {
       // Allow scripts in the webview
       enableScripts: true,
-      localResourceRoots: [this._extensionUri],
+      //localResourceRoots: [this._extensionUri],
     };
     webviewView.webview.html = this._getHtmlForWebview(webviewView.webview);
     webviewView.webview.onDidReceiveMessage(async (data) => {
       switch (data.type) {
+        case "openBrowser": {
+          openDefault.openDefaultBrowser();
+          break;
+        }
         case "onInfo": {
           if (!data.value) {
             return;
