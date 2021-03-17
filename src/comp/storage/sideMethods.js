@@ -30,7 +30,6 @@ function SideBarObj(inName,inId){
  */
  function pushToStore(input){
     store.push(input);
-    console.log(store);
 }
 
 /**

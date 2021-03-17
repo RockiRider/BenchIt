@@ -42,13 +42,11 @@ class LocalServer {
             //connection is up, let's add a simple simple event
             ws.on('message', (message) => {
                 if(message == 'requesting'){
-                    console.log("Requested Full DB");
                     ws.send(JSON.stringify({type:'load-save',data: store.getStore()}));
                 }
             });
             ee.on('message', function(){
                 ws.send(JSON.stringify(latestData));
-                console.log("Event - Sent Message");
             });
         });
         
@@ -81,7 +79,6 @@ class LocalServer {
 
 
 }
-//TODO: Function to send DB via websockets onMount!!!
 //TODO: Integrate Headless Chrome Inside VSCode
 //TODO: Run Web Worker inside Svelte
 
