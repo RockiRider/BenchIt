@@ -13,6 +13,15 @@
     
     //Data Stuff
     let mainArr = [];
+    let basicArr = [];
+    let dynamicArr = [];
+    
+    let basicState = true;
+    let stateTitle = 'Basic Functions';
+    let disabledDynamic = false;
+    let disabledBasic = true;
+
+
     let currentText = '';
     let benchResults = [];
     let resultState = '';
@@ -43,37 +52,88 @@
         
         socket.addEventListener('open', function (event) {
             // Connection opened
-            socket.send('requesting');
+            socket.send('requesting-basic');
+            socket.send('requesting-dynamic');
         });
 
         socket.addEventListener('message', function (event) {
             const message = JSON.parse(event.data);
             switch(message.type){
-                case "new-function":
-                    mainArr = [...mainArr,{
-                    name: message.data.name, 
-                    id:message.data.id, 
-                    start: message.data.start,
-                    finish:message.data.finish, 
-                    path:message.data.fsPath, 
-                    text: message.data.text
-                }];
-                
-                //syncUp(message.data);
-                break;
-                case "load-save":
-                    mainArr = message.data;
-                break;
-                case "onDelete":
-                    const textIsCurrent = mainArr.some((data) => {
+                case "new-function":{
+                    if(message.data.type == 'Basic'){
+                        basicArr = [...basicArr,{
+                            name: message.data.name, 
+                            id:message.data.id, 
+                            start: message.data.start,
+                            finish:message.data.finish, 
+                            path:message.data.fsPath, 
+                            text: message.data.text,
+                            example:message.data.examples
+                        }];
+                        if(basicState){
+                            mainArr = basicArr;
+                        }
+                    }else{
+                        dynamicArr = [...dynamicArr,{
+                            name: message.data.name, 
+                            id:message.data.id, 
+                            start: message.data.start,
+                            finish:message.data.finish, 
+                            path:message.data.fsPath, 
+                            text: message.data.text,
+                            example:message.data.examples
+                        }];
+                        if(!basicState){
+                            mainArr = dynamicArr;
+                        }
+                    }
+                    
+                    break;
+                }
+                case "load-basic-save":{
+                    basicArr = message.data;
+                    if(basicState){
+                        mainArr = basicArr;
+                    }
+                    break;
+                }
+                case "load-dynamic-save":{
+                    dynamicArr = message.data;
+                    if(!basicState){
+                        mainArr = dynamicArr;
+                    }
+                    break;
+                }
+                case "onDelete-basic":{
+                    const textIsCurrent = basicArr.some((data) => {
                         return data.text == currentText && data.id == message.data.id
                     })
                     if(textIsCurrent){
                         currentText = '';
                     }
-                    const newArr = mainArr.filter(data => data.name !== message.data.name && data.id !==  message.data.id);
-                    mainArr = newArr;
-                break;
+                    const newArr = basicArr.filter(data => data.name !== message.data.name && data.id !==  message.data.id);
+                    basicArr = newArr;
+
+                    if(basicState){
+                        mainArr = basicArr;
+                    }
+                    break;
+                }
+                case "onDelete-dynamic":{
+                    console.log("Here!");
+                    const textIsCurrent = dynamicArr.some((data) => {
+                        return data.text == currentText && data.id == message.data.id
+                    })
+                    if(textIsCurrent){
+                        currentText = '';
+                    }
+                    const newArr = dynamicArr.filter(data => data.name !== message.data.name && data.id !==  message.data.id);
+                    dynamicArr = newArr;
+                    if(!basicState){
+                        mainArr = dynamicArr;
+                    }
+                    break;
+                }
             }
         });
     });
@@ -91,6 +151,11 @@
         updateGraphData();
     }
 
+
+
+
+
+    // Basic Functions graph stuff!!
     function updateGraphData(){
         if(mainArr.length !== benchResults.length){
             alert('Error function added/removed during benchmarking!');
@@ -100,6 +165,11 @@
         for(let i = 0; i<benchResults.length;i++){
             let element = mainArr[i];
             let resulting = benchResults[i];
+            //Clean out the array
+            dataPoints.x = [];
+            dataPoints.y = [];
+            dataPoints.error = [];
+
             dataPoints.x.push(element.name);
             dataPoints.y.push(resulting.ops);
             dataPoints.error.push(resulting.rme);
@@ -161,15 +231,34 @@
       margin-top: 25px;
       margin-bottom: 40px;
   }
+  .inputArea button{
+      background-color: #0357d4;
+      color: #fff;
+      cursor: pointer;
+      padding-left: 20px;
+      padding-right: 20px;
+      border: 0;
+    }
+    #left{
+        border-top-left-radius: 20px;
+        border-bottom-left-radius: 20px;
+    }
+    #right{
+        border-top-right-radius: 20px;
+        border-bottom-right-radius: 20px;
+    }
+    .inputArea button:disabled{
+        background-color: #062c64;
+        cursor: default;
+    }
 
   #mainbtn {
       background-color: #111;
       color: #fff;
       cursor: pointer;
-      border-color: #111;
       padding-left: 20px;
       padding-right: 20px;
-      border-radius: 20px;
+      border: 0;
   }
 
   .btnArea {
@@ -245,16 +334,32 @@
   }
 </style>
 
-<h1 id="viewTitle">Live View</h1>
+<h1 id="viewTitle">Live {stateTitle}</h1>
 <div class="inputArea">
-  <button on:click={callWorker} id="mainbtn">Test Performance</button>
+    <button id="left" disabled={disabledBasic} on:click={() =>{
+        basicState = true;
+        stateTitle = 'Basic Functions';
+        disabledDynamic = false;
+        disabledBasic = true;
+        currentText = '';
+        mainArr = basicArr;
+      }}>Basic</button>
+    <button on:click={callWorker} id="mainbtn">Test Performance</button>
+    <button id="right" disabled={disabledDynamic} on:click={() =>{
+        basicState = false;
+        stateTitle = 'Dynamic Functions';
+        disabledBasic = false;
+        disabledDynamic = true;
+        currentText = '';
+        mainArr = dynamicArr;
+        
+      }}>Dynamic</button>
 </div>
 <div class="resultsArea"><h4>{resultState}</h4></div>
 <div id="btnArea" class="btnArea">
   {#each mainArr as section,i}
     <button type="button" on:click={() =>{
       currentText = section.text;
-      console.log(currentText);
     }} class="btn btn-primary" id='fun{section.id}'>{section.name}</button>
   {/each}
 </div>

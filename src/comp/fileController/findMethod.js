@@ -24,6 +24,7 @@ function getMethodData(functionName,activeDoc) {
 	if(location.header !== "Accepted"){
 		return {head:"Error",msg:location.errorMsg}
 	}
+	//console.log(location);
 
 	let startPos = new vscode.Position(location.start-1,location.firstChar);
 	let finishPos = new vscode.Position(location.finish-1,location.lastChar);
@@ -31,7 +32,21 @@ function getMethodData(functionName,activeDoc) {
 	try{
 		let textRange = new vscode.Range(startPos,finishPos);
 		let methodText = activeDoc.document.getText(textRange);
-		const data = {head:location.header,msg:location.errorMsg,start:location.start,finish:location.finish,filePath:path,text:methodText};
+		const data = {
+			head:location.header,
+			type:location.exampleData.exampleData.type,
+			start:location.start,
+			finish:location.finish,
+			filePath:path,
+			text:methodText,
+			msg:location.errorMsg,
+			examples:location.exampleData
+			/*TODO: 
+					create new states on the webviews, 
+					create different workers for each state
+					Implement parameters functionality
+			*/
+		};
 
 		return data;
 	}catch(e){
@@ -42,6 +57,9 @@ function getMethodData(functionName,activeDoc) {
 	return {head:"Error",msg:"Function not found"};
 }
 
+/**
+ * Finds the function location on the file & calls example.findComments to find the example based inputs
+ */
 function getLocation(functionName,path){
 	let lines = fs.readFileSync(path, 'utf8').split('\n')
 	.filter(Boolean);
@@ -79,7 +97,6 @@ function getLocation(functionName,path){
 					let params = example.findParams(mainLine);
 					if(params){
 						let val = example.findComments(lines,functionName,params);
-						console.log(val);
 						// @ts-ignore
 						if(val.head == 'error'){
 							findings.header = "Failed";
@@ -89,7 +106,9 @@ function getLocation(functionName,path){
 							findings.exampleData = val;
 						}
 					}else{
-						findings.exampleData = new example.MethodType("Basic",0,0);
+						console.log("Defaults to Basic");
+						let newData = new example.MethodType("Basic",0,0);
+						findings.exampleData = {exampleData:newData};
 						//TODO: What if we want a function with 0 params to execute dynamically?
 					}
 				}else{
@@ -99,7 +118,8 @@ function getLocation(functionName,path){
 						findings.header = "Failed";
 						findings.errorMsg = "The function has parameters that are not defined with examples";
 					}else{
-						findings.exampleData = new example.MethodType("Basic",0,0);
+						let newData = new example.MethodType("Basic",0,0);
+						findings.exampleData = {exampleData:newData};
 					}
 					
 				}

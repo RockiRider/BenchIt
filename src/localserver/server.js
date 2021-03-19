@@ -3,7 +3,8 @@ const path = require('path');
 const http = require("http");
 const WebSocket = require('ws');
 const event = require('events');
-const store = require('../comp/storage/storeMethods');
+const basicStore = require('../comp/storage/storeBasicMethods');
+const dynamicStore = require('../comp/storage/storeDynamicMethods');
 
 // @ts-ignore
 const ee = new event.EventEmitter();
@@ -41,8 +42,11 @@ class LocalServer {
         wss.on('connection', (ws) => {
             //connection is up, let's add a simple simple event
             ws.on('message', (message) => {
-                if(message == 'requesting'){
-                    ws.send(JSON.stringify({type:'load-save',data: store.getStore()}));
+                if(message == 'requesting-basic'){
+                    ws.send(JSON.stringify({type:'load-basic-save',data: basicStore.getStore()}));
+                }
+                if(message == 'requesting-dynamic'){
+                    ws.send(JSON.stringify({type:'load-dynamic-save',data: dynamicStore.getStore()}));
                 }
             });
             ee.on('message', function(){

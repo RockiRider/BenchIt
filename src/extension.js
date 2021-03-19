@@ -1,7 +1,8 @@
 const vscode = require('vscode');
 const findMethod = require('./comp/fileController/findMethod');
 const sidebarProvider = require('./comp/SideBarProvider');
-const methodStorage = require('./comp/storage/storeMethods');
+const basicMethodStorage = require('./comp/storage/storeBasicMethods');
+const dynamicMethodStorage = require('./comp/storage/storeDynamicMethods');
 //const mainDisplay = require('./comp/MainPanel');
 //const closeViewTracker = require('./comp/closeCounter');
 
@@ -35,7 +36,8 @@ function activate(context) {
 
 	console.log('Congratulations, your extension "benchIt" is now active!');
 
-	let methodCounter = 1;
+	let basicCounter = 1;
+	let dynamicCounter = 1;
 
 	context.subscriptions.push(vscode.commands.registerCommand('benchit.addCase', function () {
 
@@ -94,25 +96,44 @@ function activate(context) {
 						//Function is found from here! Start the server!
 						console.log(data);
 
+						let methodInfo;
 
+						if(data.type == 'Basic'){
+							//Sends to storage to save
+							methodInfo = new basicMethodStorage.BasicMethodObj(method, basicCounter, data.start, data.finish, data.filePath, data.text,data.type,data.examples);
+							basicMethodStorage.pushToStore(methodInfo);
+							
 
-						//Sends to storage to save
-						const methodInfo = new methodStorage.MethodObj(method, methodCounter, data.start, data.finish, data.filePath, data.text);
-						methodStorage.pushToStore(methodInfo);
-						methodCounter++;
-
-
-						//Sending to Sidebar
-						var _a;
-						(_a = sbprov._view) === null || _a === void 0 ? void 0 : _a.webview.postMessage({
-							type: "new-function",
-							value: {
-								name: method,
-								id: methodCounter
-							},
-						})
-
-
+							//Sending to Sidebar
+							var _a;
+							(_a = sbprov._view) === null || _a === void 0 ? void 0 : _a.webview.postMessage({
+								type: "new-function",
+								value: {
+									name: method,
+									id: basicCounter,
+									type: data.type
+								},
+							})
+							basicCounter++;
+						}else{
+							//Sends to storage to save
+							methodInfo = new dynamicMethodStorage.DynamicMethodObj(method, dynamicCounter, data.start, data.finish, data.filePath, data.text,data.type,data.examples);
+							dynamicMethodStorage.pushToStore(methodInfo);
+							
+							//Sending to Sidebar
+							var _a;
+							(_a = sbprov._view) === null || _a === void 0 ? void 0 : _a.webview.postMessage({
+								type: "new-function",
+								value: {
+									name: method,
+									id: dynamicCounter,
+									type: data.type
+								},
+							})
+							dynamicCounter++;
+						}
+						
+						
 						if(browserOpened){
 							instance.handleMsg({type: 'new-function',data: methodInfo});
 						}else{

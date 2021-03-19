@@ -1,7 +1,9 @@
 const vscode = require('vscode');
 const getNonce = require('./getNonce');
-const methodStorage = require('./storage/storeMethods');
-const sidebarStorage = require('./storage/sideMethods');
+const basicMethodStorage = require('./storage/storeBasicMethods');
+const dynamicMethodStorage = require('./storage/storeDynamicMethods');
+const sidebarDynamicStorage = require('./storage/sideDynamicMethods');
+const sidebarBasicStorage = require('./storage/sideBasicMethods');
 const {instance} = require('./objController/serverInstance');
 const openDefault = require('./browserController/openDefault');
 
@@ -20,8 +22,15 @@ class SidebarProvider {
     webviewView.webview.onDidReceiveMessage(async (data) => {
       switch (data.type) {
         case "onMount": {
-          const currentVal  = sidebarStorage.getStore();
-          this._view.webview.postMessage({type: "load-save",value: currentVal})
+          if(data.value){
+            //Basic
+            const currentVal  = sidebarBasicStorage.getStore();
+            this._view.webview.postMessage({type: "load-basic-save",value: currentVal});
+          }else{
+            const currentVal  = sidebarDynamicStorage.getStore();
+            this._view.webview.postMessage({type: "load-dynamic-save",value: currentVal});
+          }
+          
           break;
         }
         case "openBrowser": {
@@ -42,16 +51,23 @@ class SidebarProvider {
           vscode.window.showErrorMessage(data.value);
           break;
         }
-        case "onDelete":{
+        case "onDelete-basic":{
           if(!data.name || !data.id){
             return
           }
-          methodStorage.findAndRemove(data.name,data.id);
-          //mainDisplay.MainPanel.currentPanel._panel.webview.postMessage({type: 'onDelete',data:{name:data.name,id:data.id}});
-          //TODO: On Delete to Server!mainExtension
-
-          //mainExtension.sendServerMsg({type: 'onDelete',data:{name:data.name,id:data.id}});
-          instance.handleMsg({type: 'onDelete',data:{name:data.name,id:data.id}});
+          basicMethodStorage.findAndRemove(data.name,data.id);
+          //To server
+          instance.handleMsg({type: 'onDelete-basic',data:{name:data.name,id:data.id}});
+          console.log("Removed");
+          break;
+        }
+        case "onDelete-dynamic":{
+          if(!data.name || !data.id){
+            return
+          }
+          dynamicMethodStorage.findAndRemove(data.name,data.id);
+          //To server
+          instance.handleMsg({type: 'onDelete-dynamic',data:{name:data.name,id:data.id}});
           console.log("Removed");
           break;
         }

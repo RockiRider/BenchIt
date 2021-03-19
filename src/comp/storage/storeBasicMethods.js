@@ -1,4 +1,4 @@
-const side = require('./sideMethods');
+const side = require('./sideBasicMethods');
 /*
   This is where we store all the Information of the function we are given
   Essentially our database
@@ -6,13 +6,15 @@ const side = require('./sideMethods');
 
 let store = [];
 
-function MethodObj(inName, inId, inStart, inFinsih, inPath, inText) {
+function BasicMethodObj(inName, inId, inStart, inFinsih, inPath, inText,inType,inExamples) {
   this.name = inName;
   this.id = inId;
   this.start = inStart;
   this.finish = inFinsih;
   this.fsPath = inPath;
   this.text = inText;
+  this.type = inType;
+  this.examples = inExamples;
 
   //We should store colour and results too!
 }
@@ -37,7 +39,7 @@ function setStore(inputArr){
  * @param {Object} input 
  */
 function pushToStore(input){
-  let newSide = new side.SideBarObj(input.name,input.id);
+  let newSide = new side.BasicSideBarObj(input.name,input.id);
   side.pushToStore(newSide);
   store.push(input);
 }
@@ -60,7 +62,7 @@ module.exports = {
 	// @ts-ignore
   getStore,
   setStore,
-  MethodObj,
+  BasicMethodObj,
   findAndRemove,
   pushToStore
 }

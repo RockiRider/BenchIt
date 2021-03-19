@@ -2,9 +2,10 @@
 
 let store = [];
 
-function SideBarObj(inName,inId){
+function DynamicSideBarObj(inName,inId){
     this.name = inName;
     this.id = inId;
+    this.type = 'Dynamic';
 }
 
 
@@ -49,7 +50,7 @@ function SideBarObj(inName,inId){
       // @ts-ignore
     getStore,
     setStore,
-    SideBarObj,
+    DynamicSideBarObj,
     findAndRemove,
     pushToStore
   }

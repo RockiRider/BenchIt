@@ -33,8 +33,6 @@ function findComments(allLines,name,knownParams){
 	for(let index = 0; index < allLines.length; index++){
 		let currentLine = allLines[index];
 		if(foundComments.start >= 0 && foundComments.end >= 0){
-			//We found the whole section so we exit the loop
-			//TODO: Check we have all the values for all the parameters here!!
 			foundComments.head = "Accepted";
 
 			let collectedExampleData = knownParams.map((el)=>{
@@ -45,18 +43,27 @@ function findComments(allLines,name,knownParams){
 					return example.name == el; 
 				});
 
+				let val;
+				//TODO: Handle Random Generator!!
+				if(foundParam.dataType == 'Array' || foundParam.dataType == 'Object'){
+					val = JSON.parse(foundExample.value);
+				}else if(foundParam.dataType == 'Number'){
+					val = parseFloat(foundExample.value);
+				}else{
+					val = foundExample.value;
+				}
 
 				const exampleData = {
 					dataType: foundParam.type,
 					name: el,
-					value: foundExample.value
+					value: val
 				}
-
 				return exampleData;
 			});
 
 			currentSearch.paramData = collectedExampleData;
 			foundComments.exampleData = currentSearch;
+			//We found the whole section & the data so we exit the loop
 			break;
 		}
 		if(currentLine.includes("/**") && currentLine.includes(name+" Example")){
@@ -103,7 +110,7 @@ function findComments(allLines,name,knownParams){
 
 function findParams(str){
 	let matches = str.match(/\(.*?\)/)[0].replace(/[()]/gi, '').replace(/\s/gi, '').split(',');
-	if(matches.length == 0){
+	if(matches.length == 0 || matches[0]==''){
 		return false;
 	}else{
 		return matches;
