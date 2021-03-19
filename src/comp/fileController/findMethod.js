@@ -5,13 +5,14 @@
 */
 const vscode = require('vscode');
 const fs = require('fs');
+const example = require('./findExamples');
 
 
 
 function getMethodData(functionName,activeDoc) {
 
 	if(functionName ===''){
-		return 'Error';
+		return {head:"Error",msg:"Function not found"};
 	}
 
 	const path = activeDoc.document.uri.fsPath;
@@ -19,13 +20,18 @@ function getMethodData(functionName,activeDoc) {
 
 	//let firstLine = activeDoc.document.lineAt(location.start - 1);;
 	//let lastLine = activeDoc.document.lineAt(location.finish);
+
+	if(location.header !== "Accepted"){
+		return {head:"Error",msg:location.errorMsg}
+	}
+
 	let startPos = new vscode.Position(location.start-1,location.firstChar);
 	let finishPos = new vscode.Position(location.finish-1,location.lastChar);
 
 	try{
 		let textRange = new vscode.Range(startPos,finishPos);
 		let methodText = activeDoc.document.getText(textRange);
-		const data = {start:location.start,finish:location.finish,filePath:path,text:methodText};
+		const data = {head:location.header,msg:location.errorMsg,start:location.start,finish:location.finish,filePath:path,text:methodText};
 
 		return data;
 	}catch(e){
@@ -33,15 +39,7 @@ function getMethodData(functionName,activeDoc) {
 		//Probably a problem with the number of lines in a document
 	}
 	
-	return 'Error';
-}
-
-//TODO: ES6 + ES5
-
-function MethodType(inType,inParams,inNumOfParams){
-	this.type = inType;
-	this.params = inParams;
-	this.numOfParams = inNumOfParams;
+	return {head:"Error",msg:"Function not found"};
 }
 
 function getLocation(functionName,path){
@@ -49,12 +47,14 @@ function getLocation(functionName,path){
 	.filter(Boolean);
 
 	let findings = {
+		header: "Failed",
 		start: 0,
 		finish: 0,
 		firstChar: null,
 		lastLineCount: null,
 		lastChar: null,
 		exampleData: null,
+		errorMsg:""
 	};
 	let openCounter = 0;
 	let closeCounter = 0;
@@ -72,17 +72,37 @@ function getLocation(functionName,path){
 				//Function name is found so we mark the index/lineNumber
 				findings.start = index +1;
 				findings.firstChar = nthIndex(lines[index],"function",1)
-				console.log(findings.firstChar);
 				startFound = true;
-
-				if(index !== 1){
-					for(let i = index;i>0;i--){
-
+				findings.header = "Accepted";
+				if(index !== 0){
+					let mainLine = lines[index];
+					let params = example.findParams(mainLine);
+					if(params){
+						let val = example.findComments(lines,functionName,params);
+						console.log(val);
+						// @ts-ignore
+						if(val.head == 'error'){
+							findings.header = "Failed";
+							// @ts-ignore
+							findings.errorMsg = val.errorMsg;
+						}else{
+							findings.exampleData = val;
+						}
+					}else{
+						findings.exampleData = new example.MethodType("Basic",0,0);
+						//TODO: What if we want a function with 0 params to execute dynamically?
 					}
 				}else{
-
+					let functionLine = lines[index];
+					let params = example.findParams(functionLine);
+					if(params){
+						findings.header = "Failed";
+						findings.errorMsg = "The function has parameters that are not defined with examples";
+					}else{
+						findings.exampleData = new example.MethodType("Basic",0,0);
+					}
+					
 				}
-				
 			}
 			if (startFound &&  openCounter > 0 && lines[index].includes("}")) {
 				let count = lines[index].split('').filter(x => x == '}').length;
@@ -118,13 +138,6 @@ function nthIndex(str, pattern, n){
     return i;
 }
 
-/**
- * Look for comments above the function.
- * Search for the Example-Based inputs!
- */
-function findComments(str){
-
-}
 
 // @ts-ignore
 exports.getMethodData = getMethodData;

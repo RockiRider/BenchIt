@@ -1,5 +1,5 @@
 const vscode = require('vscode');
-const findMethod = require('./comp/findMethod');
+const findMethod = require('./comp/fileController/findMethod');
 const sidebarProvider = require('./comp/SideBarProvider');
 const methodStorage = require('./comp/storage/storeMethods');
 //const mainDisplay = require('./comp/MainPanel');
@@ -68,13 +68,14 @@ function activate(context) {
 			return new Promise(function (resolve, reject) {
 				const found = findMethod.getMethodData(name, path);
 				if (found) {
-					if (found == 'Error') {
-						reject('Error Occured')
+					if (found.head == 'Error') {
+						//TODO: Better Error Handling
+						reject(found.msg);
 					} else {
 						resolve(found)
 					}
 				} else {
-					reject(("Not Found"));
+					reject(("Internal Error"));
 				}
 			});
 		}
@@ -168,7 +169,7 @@ function activate(context) {
 
 					}).catch((errorMsg) => {
 						//Function not found!
-						vscode.window.showWarningMessage('Function not found!');
+						vscode.window.showWarningMessage(errorMsg + ". Try again");
 						console.log("ERROR ON " + errorMsg);
 					})
 				}, 100);
