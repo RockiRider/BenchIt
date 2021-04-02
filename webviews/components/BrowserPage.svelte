@@ -7,6 +7,7 @@
 
 <script>
     import { onMount } from "svelte";
+    import tracing from '../additions/trace';
 
     const socket = new WebSocket('ws://localhost:52999');
     //const sharedWorker = require('./sharedWork');
@@ -26,7 +27,7 @@
     let benchResults = [];
     let resultState = '';
 
-    //Plot Data
+    //Basic Data
 
     let dataPoints = {
         x: [],
@@ -35,7 +36,14 @@
         color: ['#8D3B72', '#2c1b8f','#89A7A7','#06584c','#8b0955','#2B3D41','#4C5F6B','#83A0A0','#706993','#331E38']    //TODO: Dynamic colours!
     }
 
-    const worker = new Worker('sharedWork.js');
+
+    //Dynamic Data
+
+    let dynamicData = [];
+    let dynamicTraces = [];
+
+    const basicWorker = new Worker('basicWorker.js');
+    const dynamicWorker = new Worker('dynamicWorker.js');
     onMount(()=>{
        
         //Double loading??
@@ -68,7 +76,7 @@
                             finish:message.data.finish, 
                             path:message.data.fsPath, 
                             text: message.data.text,
-                            example:message.data.examples
+                            examples:message.data.examples
                         }];
                         if(basicState){
                             mainArr = basicArr;
@@ -81,7 +89,7 @@
                             finish:message.data.finish, 
                             path:message.data.fsPath, 
                             text: message.data.text,
-                            example:message.data.examples
+                            examples:message.data.examples
                         }];
                         if(!basicState){
                             mainArr = dynamicArr;
@@ -140,10 +148,103 @@
  
     function callWorker(){
         resultState = 'Loading ...';
-        worker.postMessage(JSON.stringify({allMethods:mainArr})); 
+        if(basicState){
+            basicWorker.postMessage(JSON.stringify({allMethods:mainArr})); 
+        }else{
+            dynamicWorker.postMessage(JSON.stringify({allMethods:mainArr})); 
+        }
+        
     }
 
-    worker.onmessage = function(e) {
+
+    dynamicWorker.onmessage = function(e) {
+        let benchmarkResults = JSON.parse(e.data);
+            console.log(benchmarkResults);
+            dynamicData = benchmarkResults;
+            updateData();
+    }
+
+    function updateData(){
+
+        for (const [key, value] of Object.entries(dynamicData)) {
+            console.log(`${key}: ${value}`);
+            if(key !== "winner"){
+                
+            }else if(key !== "size"){
+
+            }else{
+                value.ops;
+                tracevalue.rme;
+            }
+        }
+
+
+            for(let i = 0; i<dynamicData.length;i++){
+                let resulting = dynamicData[i];
+
+                resulting[0].map(el =>{
+                    
+                });
+
+                dataPoints1.x.push(resulting.size);
+                dataPoints1.y.push(resulting.fun1.ops);
+                dataPoints1.error.push(resulting.fun1.rme);
+
+
+                dataPoints2.x.push(resulting.size);
+                dataPoints2.y.push(resulting.fun2.ops);
+                dataPoints2.error.push(resulting.fun2.rme);
+            }
+
+            showData();   //Update Plot!
+    }
+
+
+
+        function showData(){
+           /* var trace1 = {
+                x: dataPoints1.x,
+                y:  dataPoints1.y,
+                error_y: {
+                    type: 'percent',
+                    array:  dataPoints1.error,
+                    visible: true
+                    },
+                name: 'Merge Sort',
+                mode: 'lines',
+                type: 'scatter'
+            };
+
+            var trace2 = {
+                x: dataPoints2.x,
+                y:  dataPoints2.y,
+                error_y: {
+                    type: 'percent',
+                    array:  dataPoints2.error,
+                    visible: true
+                    },
+                name: 'Bubble Sort',
+                mode: 'lines',
+                type: 'scatter'
+            };
+            */
+
+
+            var data = dynamicTraces;
+            let layout = {
+                title: 'Benchmark Results',
+                font: {
+                    size: 18
+                },
+                xaxis: {title: {text: 'Data Size'}},
+                yaxis: {title: {text: 'Operations Per Second'},type:'log'},
+            };
+            Plotly.newPlot('myDiv', data, layout,{showSendToCloud:false});
+        }
+
+
+    //Basic Results!!
+    basicWorker.onmessage = function(e) {
         let msg = JSON.parse(e.data);
         console.log(msg);
         resultState = msg.result.join(' , ');
@@ -151,25 +252,21 @@
         updateGraphData();
     }
 
-
-
-
-
-    // Basic Functions graph stuff!!
     function updateGraphData(){
         if(mainArr.length !== benchResults.length){
             alert('Error function added/removed during benchmarking!');
             return;
         }
         console.log(benchResults);
+        //Clean out the array
+        dataPoints.x = [];
+        dataPoints.y = [];
+        dataPoints.error = [];
+        
         for(let i = 0; i<benchResults.length;i++){
             let element = mainArr[i];
             let resulting = benchResults[i];
-            //Clean out the array
-            dataPoints.x = [];
-            dataPoints.y = [];
-            dataPoints.error = [];
-
+            
             dataPoints.x.push(element.name);
             dataPoints.y.push(resulting.ops);
             dataPoints.error.push(resulting.rme);

@@ -210,4 +210,3 @@ import dynamicStorage from '../../src/comp/storage/sideDynamicMethods';
     </div>
   </div>
 {/each}
-<p>{JSON.stringify(nameArr,null,2)}</p>

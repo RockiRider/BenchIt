@@ -41,11 +41,6 @@ function getMethodData(functionName,activeDoc) {
 			text:methodText,
 			msg:location.errorMsg,
 			examples:location.exampleData
-			/*TODO: 
-					create new states on the webviews, 
-					create different workers for each state
-					Implement parameters functionality
-			*/
 		};
 
 		return data;
