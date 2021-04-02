@@ -43,12 +43,33 @@ function example(str){
         output.name = varName[0].replace(/[\n\r]/g,"").trim();
         output.value = varName[1].replace(/[\n\r]/g,"").trim();
 
+        if(output.value.includes("RandomInt")){
+            let data = output.value.split("RandomInt ");
+            // output.value = randomGen(data[1]);
+
+            let txt = data[1];
+            let numb = txt.match(/\d/g);
+            numb = numb.join("");
+            output.value = randomGen(numb);
+            console.log(output.value);
+        }
+
     } catch (error) {
        return "Error";
     }
 
 
     return output;
+}
+
+function randomGen(size){
+    console.log(size);
+    let temp = [];
+    for(let i = 0;i<size;i++){
+        let ran = Math.floor(Math.random() * 10000);
+        temp.push(ran);
+    }
+    return temp;
 }
 
 module.exports = {

@@ -45,17 +45,21 @@ function findComments(allLines,name,knownParams){
 
 				let val;
 				//TODO: Handle Random Generator!!
-				if(foundParam.dataType == 'Array'){
+				console.log(foundParam.type);
+				if(foundParam.type == 'Array'){
+					console.log("Here!!");
 					val = JSON.parse(foundExample.value);
 					const exampleData = {
 						dataType: foundParam.type,
 						name: el,
 						value: [val]
 					}
+					console.log(val);
+					console.log(exampleData.value);
 					return exampleData;
-				}else if(foundParam.dataType == 'Object'){
+				}else if(foundParam.type == 'Object'){
 					val = JSON.parse(foundExample.value);
-				}else if(foundParam.dataType == 'Number'){
+				}else if(foundParam.type == 'Number'){
 					val = parseFloat(foundExample.value);
 				}else{
 					val = foundExample.value;
