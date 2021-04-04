@@ -7,7 +7,7 @@
 
 <script>
     import { onMount } from "svelte";
-    import tracing from '../additions/trace';
+    import {createTraces,xDataPoint,yDataPoint,yErrorData,namesData,cleanDynamicData} from '../additions/trace';
 
     const socket = new WebSocket('ws://localhost:52999');
     //const sharedWorker = require('./sharedWork');
@@ -38,9 +38,7 @@
 
 
     //Dynamic Data
-
     let dynamicData = [];
-    let dynamicTraces = [];
 
     const basicWorker = new Worker('basicWorker.js');
     const dynamicWorker = new Worker('dynamicWorker.js');
@@ -51,13 +49,6 @@
         script.src = "https://cdn.plot.ly/plotly-latest.min.js"
         document.head.append(script);
 
-        
-        /*
-        script.onload = function() {
-            createPlot();
-        };
-        */
-        
         socket.addEventListener('open', function (event) {
             // Connection opened
             socket.send('requesting-basic');
@@ -156,91 +147,67 @@
         
     }
 
-
+    //Dynamic Benchmark!!
     dynamicWorker.onmessage = function(e) {
         let benchmarkResults = JSON.parse(e.data);
-            console.log(benchmarkResults);
-            dynamicData = benchmarkResults;
-            updateData();
+        dynamicData = [...benchmarkResults];
+        cleanDynamicData();
+        updateData();
     }
-
     function updateData(){
-
-        for (const [key, value] of Object.entries(dynamicData)) {
-            console.log(`${key}: ${value}`);
-            if(key !== "winner"){
-                
-            }else if(key !== "size"){
-
-            }else{
-                value.ops;
-                tracevalue.rme;
+        dynamicData.map((el,i) =>{
+            let indexVal = 0;
+            if(i == 0){
+                let numOfFunctions = Object.keys(el).length - 2;
+                //First run through! Create 2D Arrays
+                for(let i = 0;i<numOfFunctions;i++){
+                    let emptyArr = [];
+                    yDataPoint.push([...emptyArr]);
+                    yErrorData.push([...emptyArr]);
+                    console.log(yDataPoint);
+                    console.log(yErrorData);
+                }
             }
-        }
-
-
-            for(let i = 0; i<dynamicData.length;i++){
-                let resulting = dynamicData[i];
-
-                resulting[0].map(el =>{
-                    
-                });
-
-                dataPoints1.x.push(resulting.size);
-                dataPoints1.y.push(resulting.fun1.ops);
-                dataPoints1.error.push(resulting.fun1.rme);
-
-
-                dataPoints2.x.push(resulting.size);
-                dataPoints2.y.push(resulting.fun2.ops);
-                dataPoints2.error.push(resulting.fun2.rme);
+            
+            for (const [key, value] of Object.entries(el)) {
+                if(key == "winner" ){
+                    console.log(`Winner is ${value}`);
+                }else if (key == "size"){
+                    xDataPoint.push(value);
+                }else{
+                    namesData.push(findName(key,false));
+                    yDataPoint[indexVal].push(value.ops);
+                    yErrorData[indexVal].push(value.rme);
+                    indexVal++;
+                }
             }
-
-            showData();   //Update Plot!
+        });
+        showData(); 
     }
-
-
-
-        function showData(){
-           /* var trace1 = {
-                x: dataPoints1.x,
-                y:  dataPoints1.y,
-                error_y: {
-                    type: 'percent',
-                    array:  dataPoints1.error,
-                    visible: true
-                    },
-                name: 'Merge Sort',
-                mode: 'lines',
-                type: 'scatter'
-            };
-
-            var trace2 = {
-                x: dataPoints2.x,
-                y:  dataPoints2.y,
-                error_y: {
-                    type: 'percent',
-                    array:  dataPoints2.error,
-                    visible: true
-                    },
-                name: 'Bubble Sort',
-                mode: 'lines',
-                type: 'scatter'
-            };
-            */
-
-
-            var data = dynamicTraces;
-            let layout = {
-                title: 'Benchmark Results',
-                font: {
-                    size: 18
-                },
-                xaxis: {title: {text: 'Data Size'}},
-                yaxis: {title: {text: 'Operations Per Second'},type:'log'},
-            };
-            Plotly.newPlot('myDiv', data, layout,{showSendToCloud:false});
+    function showData(){
+        
+        let data = createTraces();
+        let layout = {
+            title: 'Benchmark Results',
+            font: {
+                size: 18
+            },
+            xaxis: {title: {text: 'Data Size'}},
+            yaxis: {title: {text: 'Operations Per Second'},type:'log'},
+        };
+        Plotly.newPlot('myPlot', data, layout,{showSendToCloud:false});
+        resultState = "Finished Dynamic Benchmark";
+    }
+    function findName(funId,basic){
+        let foundObj;
+        let numId = parseInt(funId.match(/\d/g).join(''), 10);
+        if(basic){
+            foundObj = basicArr.filter(data => data.id ===  numId);
+        }else{
+            foundObj = dynamicArr.filter(data => data.id ===  numId);
         }
+        return foundObj[0].name;
+    }
 
 
     //Basic Results!!
@@ -289,6 +256,7 @@
         },
         type: 'bar'
         };
+        // TODO: Push all traces to data array!
         let data = [trace1]
         let layout = {
             title: 'Benchmark Results',
