@@ -30,10 +30,10 @@ function createTraces(){
 }
 
 function cleanDynamicData(){
-    xDataPoint = [];    
-    yDataPoint = [];
-    yErrorData = [];
-    namesData = [];
+    xDataPoint.length = 0;    
+    yDataPoint.length = 0;
+    yErrorData.length = 0;
+    namesData.length = 0;
 }
 
 module.exports = {

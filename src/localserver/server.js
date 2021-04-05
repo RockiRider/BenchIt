@@ -5,6 +5,7 @@ const WebSocket = require('ws');
 const event = require('events');
 const basicStore = require('../comp/storage/storeBasicMethods');
 const dynamicStore = require('../comp/storage/storeDynamicMethods');
+const {exRun} = require('./res');
 
 // @ts-ignore
 const ee = new event.EventEmitter();
@@ -42,11 +43,18 @@ class LocalServer {
         wss.on('connection', (ws) => {
             //connection is up, let's add a simple simple event
             ws.on('message', (message) => {
-                if(message == 'requesting-basic'){
+                // @ts-ignore
+                let msg = JSON.parse(message);
+                
+                if(msg.head == 'requesting-basic'){
                     ws.send(JSON.stringify({type:'load-basic-save',data: basicStore.getStore()}));
                 }
-                if(message == 'requesting-dynamic'){
+                if(msg.head == 'requesting-dynamic'){
                     ws.send(JSON.stringify({type:'load-dynamic-save',data: dynamicStore.getStore()}));
+                }
+                if(msg.head == 'research-data'){
+                    console.log("Research!! HERE");
+                    exRun(msg.val);
                 }
             });
             ee.on('message', function(){

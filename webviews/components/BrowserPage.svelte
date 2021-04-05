@@ -40,6 +40,9 @@
     //Dynamic Data
     let dynamicData = [];
 
+    //Research Statistics
+    let research = false;
+
     const basicWorker = new Worker('basicWorker.js');
     const dynamicWorker = new Worker('dynamicWorker.js');
     onMount(()=>{
@@ -51,8 +54,10 @@
 
         socket.addEventListener('open', function (event) {
             // Connection opened
-            socket.send('requesting-basic');
-            socket.send('requesting-dynamic');
+            let basic = {head:"requesting-basic",val:0}
+            socket.send(JSON.stringify(basic));
+            let dynamic = {head:"requesting-dynamic",val:0}
+            socket.send(JSON.stringify(dynamic));
         });
 
         socket.addEventListener('message', function (event) {
@@ -153,6 +158,7 @@
         dynamicData = [...benchmarkResults];
         cleanDynamicData();
         updateData();
+        checkResearch();
     }
     function updateData(){
         dynamicData.map((el,i) =>{
@@ -209,6 +215,20 @@
         return foundObj[0].name;
     }
 
+    function checkResearch(){
+        if(research){
+            let data = {head:"research-data",val:dynamicData};
+            if(isOpen(socket)){
+                socket.send(JSON.stringify(data));
+                callWorker(); //LOOP IT
+            }else{
+                console.log("SOCKET CLOSED RECONNECT!!");
+            }
+            
+        }
+    }
+
+    function isOpen(ws) { return ws.readyState === ws.OPEN };
 
     //Basic Results!!
     basicWorker.onmessage = function(e) {
@@ -347,6 +367,9 @@
       text-align: justify;
       margin-top: 30px;
   }
+  #checkboxAreaResearch{
+      margin-top: 100px;
+  }
 
   pre {
       background-color: #FCFAEE;
@@ -434,3 +457,7 @@
   </div>
 </div>
 <div id="myPlot"></div>
+
+<div id="checkboxAreaResearch">
+    <label><input type=checkbox bind:checked={research}>Yes! Loop benchmarks and get stats!</label>
+</div>
