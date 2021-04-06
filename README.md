@@ -2,74 +2,76 @@
 
 A micro-benchmarking tool for developers with Live Programming aspects. Only supports JavaScript for now.
 
-## This is still in Development!
+## **Disclaimer** this is still in Development!
 
-## Features
+## What the extension seeks to achieve
 
-Register an existing function in your code to our extension, any changes to it will be automatically updated.
-
-Compare multiple functions to eachother with our Benchmarking functionality which is built ontop of Benchmark.js, otherwise essentially known as JSPerf.
-
-Run your functions with any inputs you desire/require. It's all on you to ensure that you micro-benchmark correctly.
-
-However... we do help you along the way.
+BenchIt aims to bring benchmarking into VSCode, making it easy for developers to micro-benchmark their JavaScript functions. 
 
 
------
-I will update the rest of this later
+**GIF HERE**
+More Info Below:
 
-\!\[feature X\]\(images/feature-x.png\)
+## Pre-release use
 
-> Tip: Many popular extensions utilize animations. This is an excellent way to show off your extension! We recommend short, focused animations that are easy to follow.
+If you want to try this out now, before its published as a VSCode extension, you will need the following:
 
-## Requirements
+- Node
+- NPM
+- VSCode
 
-If you have any requirements or dependencies, add a section describing those and how to install and configure them.
+Clone this repository somewhere and open it with VSCode.
 
-## Extension Settings
+- Run `npm install` that will install all the dependancies
+- Run `npm run watch` which will compile all the Svelte pages
+- Press `F5` on the keyboard to run the extension inside VSCode or click `Run` and `Start Debugging`
 
-Include if your extension adds any VS Code settings through the `contributes.configuration` extension point.
+You will now be able to use the extension in its current state, whilst debugging the extension.
 
-For example:
 
-This extension contributes the following settings:
+### Bugs
 
-* `myExtension.enable`: enable/disable this extension
-* `myExtension.thing`: set to `blah` to do something
+As BenchIt is still pre-release, if you find any bugs or issues with it please feel free to open an issue on this repo.
 
-## Known Issues
+The extension itself is a bit inefficient at the moment, but that will be polished later after all the functionality is up to speed.
 
-Calling out known issues can help limit users opening duplicate issues against your extension.
+### v0.5 Functionality
+- Bencharmking isolated functions with visualised results
+- Example Based declerations for a functions parameters
+- Live function tracking (Any code changes update automatically)
+- Recursive support
+- Supports functions inside functions
+- Benchmarking takes place on a different thread (Minimal performance impact)
+- `Simple Benchmarks` support any number of parameters of any type
+- `Dynamic Benchmarks` only support **one** parameter, which has to be an Array. You can randomley generate an array instead of writing it out as an example.
+- The `Random Generation` only generates an array of type `Number`
 
-## Release Notes
+### v0.5 Limitations
+- Limited Example Based Programming
+- Limited Error Handling
+- Limited ES5 Support
+- Does not support arrow functions
+- Benchmarking not tested with promises/async functions yet
 
-Users appreciate release notes as you update your extension.
+[Check whats left to complete before v1.0 here](https://github.com/RockiRider/BenchIt/projects/1)
 
-### 1.0.0
+## How to use it
 
-Initial release of ...
+- Open a `.js` file in VSCode
+- Use the `addCase` VSCode command
+- Enter in any functions name that is declared inside the currently open `.js` file.
+- If the function takes in any parameters/or if you want to make this a dynamic benchmark you will have to declare some **examples** as exhibited [here]()
+- Once the function is registered, its now being tracked and saved by the extension. You can remove the function from the dock whenever you wish via the sidebar.
+- Click `Open Browser` and you can now benchmark all your tracked `Simple` or `Dynamic` functions. 
 
-### 1.0.1
 
-Fixed issue #.
 
-### 1.1.0
+### Extra info
+The benchmarking functionality is built ontop of Benchmark.js (formally utilised in JSPerf).
 
-Added features X, Y, and Z.
+It's all on you to ensure that you micro-benchmark correctly.
 
------------------------------------------------------------------------------------------------------------
+However... we do try to help you along the way.
 
-## Working with Markdown
+## How to benchmark correctly
 
-**Note:** You can author your README using Visual Studio Code.  Here are some useful editor keyboard shortcuts:
-
-* Split the editor (`Cmd+\` on macOS or `Ctrl+\` on Windows and Linux)
-* Toggle preview (`Shift+CMD+V` on macOS or `Shift+Ctrl+V` on Windows and Linux)
-* Press `Ctrl+Space` (Windows, Linux) or `Cmd+Space` (macOS) to see a list of Markdown snippets
-
-### For more information
-
-* [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
-* [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
-
-**Enjoy!**
