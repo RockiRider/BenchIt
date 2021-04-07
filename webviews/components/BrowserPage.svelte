@@ -156,11 +156,15 @@
 
     //Dynamic Benchmark!!
     dynamicWorker.onmessage = function(e) {
-        let benchmarkResults = JSON.parse(e.data);
-        dynamicData = [...benchmarkResults];
-        cleanDynamicData();
-        updateData();
-        checkResearch();
+        if(e.data == 'Error!'){
+            resultState = "Syntax Error in one of your functions! Check console"
+        }else{
+            let benchmarkResults = JSON.parse(e.data);
+            dynamicData = [...benchmarkResults];
+            cleanDynamicData();
+            updateData();
+            checkResearch();
+        }
     }
     function updateData(){
         dynamicData.map((el,i) =>{
@@ -234,11 +238,17 @@
 
     //Basic Results!!
     basicWorker.onmessage = function(e) {
-        let msg = JSON.parse(e.data);
-        console.log(msg);
-        resultState = msg.result.join(' , ');
-        benchResults = msg.stats;
-        updateGraphData();
+
+        if(e.data == 'Error!'){
+            resultState = "Syntax Error in one of your functions! Check console"
+        }else{
+
+            let msg = JSON.parse(e.data);
+            console.log(msg);
+            resultState = msg.result.join(' , ');
+            benchResults = msg.stats;
+            updateGraphData();
+        }
     }
 
     function updateGraphData(){

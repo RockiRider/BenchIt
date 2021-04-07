@@ -13,7 +13,9 @@ onmessage = function(e) {
   handleBenchmark(arrayOfTests).then((results)=>{
     postMessage(JSON.stringify(results));
   }).catch((error)=>{
-    console.log('ERROR! '+error);
+    console.log('ERROR!');
+    console.log(error);
+    postMessage("Error!");
   });
 
     //const resultObj = {type:'results',data:workerResult};

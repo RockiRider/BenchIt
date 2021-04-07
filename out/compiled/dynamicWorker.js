@@ -13,8 +13,9 @@ onmessage = function(e) {
       console.log(results);
       postMessage(JSON.stringify(results));
     }).catch((error)=>{
-      console.log('ERROR! '+error);
-      console.log(error);
+        console.log('ERROR!');
+        console.log(error);
+        postMessage("Error!");
     });
   
 }
