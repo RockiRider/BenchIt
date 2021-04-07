@@ -53,7 +53,6 @@ class LocalServer {
                     ws.send(JSON.stringify({type:'load-dynamic-save',data: dynamicStore.getStore()}));
                 }
                 if(msg.head == 'research-data'){
-                    console.log("Research!! HERE");
                     exRun(msg.val);
                 }
             });

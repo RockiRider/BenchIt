@@ -9,7 +9,7 @@ const dynamicMethodStorage = require('./comp/storage/storeDynamicMethods');
 
 const open = require('open');
 const {instance} = require('./comp/objController/serverInstance');
-let browserOpened = false;
+let browserOpened = true;
 
 
 
@@ -30,9 +30,91 @@ function activate(context) {
 	const sbprov = new sidebarProvider.SidebarProvider(context.extensionUri);
 	context.subscriptions.push(vscode.window.registerWebviewViewProvider("bench-it-sidebar", sbprov));
 	instance.createServer();
-	
 
-	//currentServer = nodeServer;
+	function findFunction(name, path) {
+		return new Promise(function (resolve, reject) {
+			const found = findMethod.getMethodData(name, path);
+			if (found) {
+				if (found.head == 'Error') {
+					//TODO: Better Error Handling
+					reject(found.msg);
+				} else {
+					resolve(found)
+				}
+			} else {
+				reject(("Internal Error"));
+			}
+		});
+	}
+
+
+	vscode.workspace.onDidChangeTextDocument(changeEvent => {
+		let currentDoc = vscode.window.activeTextEditor.document;
+		let currentAct = vscode.window.activeTextEditor;
+		// let activePath = currentDoc.uri.fsPath;
+		if (currentDoc.uri === changeEvent.document.uri && (basicMethodStorage.storeEmpty() || dynamicMethodStorage.storeEmpty())) {
+
+			//MORE TESTING NEEDED FOR LIVE PROGRAMMING
+			//console.log("Changes in Active File!");
+			// let newData = changeEvent.document.getText();
+			// console.log(newData);
+			let line = vscode.window.activeTextEditor.selection.active.line;
+			// let char = vscode.window.activeTextEditor.selection.active.character;
+
+			
+
+			let basicArr = basicMethodStorage.getStore();
+			let dynamicArr = dynamicMethodStorage.getStore();
+			
+			const foundBasicItem = basicArr.find((item) => {
+				if(item.start <= line && line <= item.finish){
+					return item;
+				}else if(item.examples.exampleData.numOfParams > 0){
+					if(item.examples.start <= line && line <= item.examples.end){
+						return item;
+					}
+				}
+			})
+			const foundDynItem = dynamicArr.find((item) => {
+				if(item.start <= line && line <= item.finish){
+					return item;
+				}else if(item.examples.start <= line && line <= item.examples.end){
+					return item;
+				}
+			})
+
+			if(foundBasicItem){
+				console.log(`${foundBasicItem.name} basic changed!`);
+				findFunction(foundBasicItem.name,currentAct).then((data) => {
+					let methodInfo = new basicMethodStorage.BasicMethodObj(foundBasicItem.name, foundBasicItem.id, data.start, data.finish, data.filePath, data.text,data.type,data.examples);
+					basicMethodStorage.findAndReplace(methodInfo);
+					instance.handleMsg({type: 'load-basic-save',data: basicMethodStorage.getStore()});
+				}).catch((error)=>{
+					basicMethodStorage.findAndRemove(foundBasicItem.name,foundBasicItem.id);
+					console.log(error);
+				})
+			}else if(foundDynItem){
+				console.log(`${foundDynItem.name} dynamic changed!`);
+				findFunction(foundDynItem.name,currentAct).then((data) => {
+					let methodInfo = new dynamicMethodStorage.DynamicMethodObj(foundDynItem.name, foundDynItem.id, data.start, data.finish, data.filePath, data.text,data.type,data.examples);
+					dynamicMethodStorage.findAndReplace(methodInfo);
+					instance.handleMsg({type: 'load-dynamic-save',data: dynamicMethodStorage.getStore()});
+				}).catch((error)=>{
+					dynamicMethodStorage.findAndRemove(foundDynItem.name,foundDynItem.id);
+					console.log(error);
+				})
+			}
+
+		}
+		/*
+		Live Programming Could be made more efficient like so
+		for (const change of changeEvent.contentChanges) {
+			 console.log(change.range); // range of text being replaced
+			 console.log(change.text); // text replacement
+		}
+
+		*/
+	});
 
 	console.log('Congratulations, your extension "benchIt" is now active!');
 
@@ -66,21 +148,7 @@ function activate(context) {
 			}
 		})
 
-		function findFunction(name, path) {
-			return new Promise(function (resolve, reject) {
-				const found = findMethod.getMethodData(name, path);
-				if (found) {
-					if (found.head == 'Error') {
-						//TODO: Better Error Handling
-						reject(found.msg);
-					} else {
-						resolve(found)
-					}
-				} else {
-					reject(("Internal Error"));
-				}
-			});
-		}
+
 
 		// Program Proceeds Under Here
 		inputBox.then((method) => {
@@ -94,7 +162,7 @@ function activate(context) {
 					 
 					findFunction(method, foundEditor).then((data) => {
 						//Function is found from here! Start the server!
-						console.log(data);
+						
 
 						let methodInfo;
 
@@ -132,7 +200,7 @@ function activate(context) {
 							})
 							dynamicCounter++;
 						}
-						
+						console.log(methodInfo);
 						
 						if(browserOpened){
 							instance.handleMsg({type: 'new-function',data: methodInfo});

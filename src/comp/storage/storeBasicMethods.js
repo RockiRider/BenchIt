@@ -55,6 +55,21 @@ function findAndRemove(nameCheck,idCheck){
   setStore(result);
 }
 
+/**
+ * 
+ * @returns boolean false if storage is empty
+ */
+function storeEmpty(){
+  if(store.length > 0) return true;
+
+  return false;
+}
+
+function findAndReplace(obj){
+  let foundIndex = store.findIndex(el => el.id == obj.id);
+  store[foundIndex] = obj;
+}
+
 // @ts-ignore
 exports.getStore = getStore;
 
@@ -64,5 +79,7 @@ module.exports = {
   setStore,
   BasicMethodObj,
   findAndRemove,
-  pushToStore
+  pushToStore,
+  storeEmpty,
+  findAndReplace,
 }

@@ -154,6 +154,7 @@ function nthIndex(str, pattern, n){
 }
 
 
+
 // @ts-ignore
 exports.getMethodData = getMethodData;
 

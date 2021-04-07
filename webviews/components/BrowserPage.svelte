@@ -97,15 +97,17 @@
                 case "load-basic-save":{
                     basicArr = message.data;
                     if(basicState){
-                        mainArr = basicArr;
+                        mainArr = [...basicArr];
                     }
+                    currentText = '';
                     break;
                 }
                 case "load-dynamic-save":{
                     dynamicArr = message.data;
                     if(!basicState){
-                        mainArr = dynamicArr;
+                        mainArr = [...dynamicArr];
                     }
+                    currentText = '';
                     break;
                 }
                 case "onDelete-basic":{
@@ -369,6 +371,7 @@
   }
   #checkboxAreaResearch{
       margin-top: 100px;
+      visibility:hidden;
   }
 
   pre {
@@ -447,7 +450,11 @@
 <div id="btnArea" class="btnArea">
   {#each mainArr as section,i}
     <button type="button" on:click={() =>{
-      currentText = section.text;
+        if(currentText == section.text){
+            currentText = '';
+        }else{
+            currentText = section.text;
+        } 
     }} class="btn btn-primary" id='fun{section.id}'>{section.name}</button>
   {/each}
 </div>

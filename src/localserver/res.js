@@ -47,8 +47,8 @@ async function exRun(data){
                 let getSRowInsert = secondFun.getRow(++(sLastRow.number));
         
                 //Add Rows
-                getFRowInsert.values = {id:firstCount, size: currentSize, name: 'bubbleSort', ops: fun1.ops ,rme: fun1.rme+"%"};
-                getSRowInsert.values = {id:secondCount, size: currentSize, name: 'mergeSort', ops: fun2.ops ,rme: fun2.rme+"%"};
+                getFRowInsert.values = {id:firstCount, size: currentSize, name: 'bubbleSort', ops: fun1.ops ,rme: fun1.rme};
+                getSRowInsert.values = {id:secondCount, size: currentSize, name: 'mergeSort', ops: fun2.ops ,rme: fun2.rme};
         
             });
 

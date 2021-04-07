@@ -51,7 +51,6 @@ function example(str){
             let numb = txt.match(/\d/g);
             numb = numb.join("");
             output.value = randomGen(numb);
-            console.log(output.value);
         }
 
     } catch (error) {
@@ -63,7 +62,6 @@ function example(str){
 }
 
 function randomGen(size){
-    console.log(size);
     let temp = [];
     for(let i = 0;i<size;i++){
         let ran = Math.floor(Math.random() * 10000);
