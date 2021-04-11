@@ -42,8 +42,8 @@ The extension itself is a bit inefficient at the moment, but that will be polish
 - Recursive support
 - Supports functions inside functions
 - Benchmarking takes place on a different thread (Minimal performance impact)
-- `Simple Benchmarks` support any number of parameters of any type
-- `Dynamic Benchmarks` only support **one** parameter, which has to be an Array. You can randomley generate an array instead of writing it out as an example.
+- `Simple Benchmarks` do not officially support parameters. The functionality is there **however** does not produce reliable or fair benchmarks.
+- `Dynamic Benchmarks` only support **one** parameter, which has to be of type **Array**. You can randomley generate an array instead of writing it out as an example.
 - The `Random Generation` only generates an array of type `Number`
 
 ### v0.5 Limitations
@@ -73,5 +73,30 @@ It's all on you to ensure that you micro-benchmark correctly.
 
 However... we do try to help you along the way.
 
-## How to benchmark correctly
+## Syntax for Example Based Programming
 
+``` javascript
+/** mergeSort Example
+ * @param {Array} arr
+ * @type == Dynamic
+ * @example arr == [1, 30, 4, 21, 100000,600]
+ */
+function mergeSort(arr){
+    //code is here
+};
+```
+
+**You can also generate an Array of numbers**
+ \
+ The code below generates an array with 2000 random Integers ranging from 0 - 10000
+
+``` javascript
+/** mergeSort Example
+ * @param {Array} arr
+ * @type == Dynamic
+ * @example arr == "RandomInt 2000"
+ */
+function mergeSort(arr){
+    //code is here
+}
+```

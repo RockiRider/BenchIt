@@ -65,18 +65,22 @@ function handleBenchmark(input){
     let suite = new Benchmark.Suite;
     let results = [];
     let winner = '';
+    let params;
     
     input.map(el =>{
       let name = el.id;
       let paramsExist = el.paramData;
       
       if(paramsExist){
-        let params = paramsExist.map((el) => {
-          let val = JSON.parse(el.value);
+        params = paramsExist.map((el) => {
+          let val = el.value;
           return val;
         });
         suite.add(name, function () {
-          el[name].apply(null,params);
+          let arr = JSON.parse(JSON.stringify(params));
+          // let arr = [arr1];
+          // console.log(arr[0]);
+          el[name].apply(null,arr);
         });
       }else{
         suite.add(name, function () {
