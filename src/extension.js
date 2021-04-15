@@ -60,25 +60,25 @@ function activate(context) {
 			// console.log(newData);
 			let line = vscode.window.activeTextEditor.selection.active.line;
 			// let char = vscode.window.activeTextEditor.selection.active.character;
-
+			let changingDoc = changeEvent.document.uri.fsPath;
 			
 
 			let basicArr = basicMethodStorage.getStore();
 			let dynamicArr = dynamicMethodStorage.getStore();
 			
 			const foundBasicItem = basicArr.find((item) => {
-				if(item.start <= line && line <= item.finish){
+				if(item.fsPath === changingDoc && item.start <= line && line <= item.finish){
 					return item;
-				}else if(item.examples.exampleData.numOfParams > 0){
+				}else if(item.fsPath === changingDoc && item.examples.exampleData.numOfParams > 0){
 					if(item.examples.start <= line && line <= item.examples.end){
 						return item;
 					}
 				}
 			})
 			const foundDynItem = dynamicArr.find((item) => {
-				if(item.start <= line && line <= item.finish){
+				if(item.fsPath === changingDoc && item.start <= line && line <= item.finish){
 					return item;
-				}else if(item.examples.start <= line && line <= item.examples.end){
+				}else if(item.fsPath === changingDoc && item.examples.start <= line && line <= item.examples.end){
 					return item;
 				}
 			})
