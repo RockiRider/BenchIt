@@ -245,7 +245,8 @@
 
             let msg = JSON.parse(e.data);
             console.log(msg);
-            resultState = msg.result.join(' , ');
+           
+            resultState = "Complete";
             benchResults = msg.stats;
             updateGraphData();
         }
