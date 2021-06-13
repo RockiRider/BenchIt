@@ -99,7 +99,6 @@ function findComments(allLines,name,knownParams){
 					return foundComments;
 				}
 				case "ignore":{
-					console.log("Ingoring");
 					break;
 				}
 			}

@@ -79,8 +79,6 @@ function getLocation(functionName,path){
 	let startFound = false;
 	let endFound = false;
 
-	console.log(lines);
-
 	for (let index = 0; index < lines.length; index++) {
 		if (findings.finish != 0 &&  findings.start != 0) {
 			//Whole Method is found so we break
@@ -106,7 +104,6 @@ function getLocation(functionName,path){
 							findings.exampleData = val;
 						}
 					}else{
-						console.log("Defaults to Basic");
 						let newData = new example.MethodType("Basic",null,0);
 						findings.exampleData = {exampleData:newData};
 						

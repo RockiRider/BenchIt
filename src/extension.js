@@ -24,8 +24,8 @@ let browserOpened = true;
  */
 function activate(context) {
 	
-	const sbprov = new sidebarProvider.SidebarProvider(context.extensionUri);
-	context.subscriptions.push(vscode.window.registerWebviewViewProvider("bench-it-sidebar", sbprov));
+	const sbProvider = new sidebarProvider.SidebarProvider(context.extensionUri);
+	context.subscriptions.push(vscode.window.registerWebviewViewProvider("bench-it-sidebar", sbProvider));
 	instance.createServer();
 
 	function findFunction(name, path) {
@@ -169,9 +169,8 @@ function activate(context) {
 							basicMethodStorage.pushToStore(methodInfo);
 							
 
-							//Sending to Sidebar
-							var _a;
-							(_a = sbprov._view) === null || _a === void 0 ? void 0 : _a.webview.postMessage({
+
+							sbProvider._view.webview.postMessage({
 								type: "new-function",
 								value: {
 									name: method,
@@ -179,6 +178,9 @@ function activate(context) {
 									type: data.type
 								},
 							})
+
+							//mainDisplay.MainPanel.currentPanel._panel.webview.postMessage({});
+
 							basicCounter++;
 						}else{
 							//Sends to storage to save
@@ -186,8 +188,7 @@ function activate(context) {
 							dynamicMethodStorage.pushToStore(methodInfo);
 							
 							//Sending to Sidebar
-							var _a;
-							(_a = sbprov._view) === null || _a === void 0 ? void 0 : _a.webview.postMessage({
+							sbProvider._view.webview.postMessage({
 								type: "new-function",
 								value: {
 									name: method,
