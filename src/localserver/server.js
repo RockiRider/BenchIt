@@ -1,3 +1,7 @@
+/**
+ * Express server that runs in the background, hosts the BrowserPage and communicates to it via WebSockets
+ */
+
 const express = require('express');
 const path = require('path');
 const http = require("http");

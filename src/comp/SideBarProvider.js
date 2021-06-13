@@ -1,3 +1,7 @@
+/**
+ * SideBarProvider.js creates the SideBar instance inside VSCode and handles all communication between the extension and the SideBar itself.
+ */
+
 const vscode = require('vscode');
 const getNonce = require('./getNonce');
 const basicMethodStorage = require('./storage/storeBasicMethods');
@@ -20,6 +24,7 @@ class SidebarProvider {
     };
     webviewView.webview.html = this._getHtmlForWebview(webviewView.webview);
     webviewView.webview.onDidReceiveMessage(async (data) => {
+      //Recieved from the SideBar
       switch (data.type) {
         case "onMount": {
           if(data.value){

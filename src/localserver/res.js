@@ -1,3 +1,8 @@
+/**
+ * This file is for research purposes.
+ * Gathers data from continious benchmark results and inputs it into an excel spreadsheet.
+ */
+
 const Excel = require('exceljs');
 const path = require('path');
 

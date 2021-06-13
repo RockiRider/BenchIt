@@ -2,14 +2,12 @@
  * extractExample.js essentially parses the inputted example data.
  */
 
-
 /**
- * 
- * @param {*} str 
- * @returns 
+ * Checks the declared Type of the function
+ * @param {String} str 
+ * @returns the type of function: Basic | Dynamic
  */
 function type(str){
-
     if(str.includes("@type == Basic")){
         return "Basic";
     }else if(str.includes("@type == Dynamic")){
@@ -19,7 +17,12 @@ function type(str){
         return "Error";
     }
 }
-// Regex (?=.*[\w])(?=.*({Array|String|Object|Number}))(?=.*@param)
+
+/**
+ * Finds data type of the declared parameters
+ * @param {String} str 
+ * @returns an object with the data type and name
+ */
 function params(str){
     let output = {type:null,name:null};
 
@@ -40,7 +43,11 @@ function params(str){
     }
     return output;
 }
-
+/**
+ * Parses the declared example variable
+ * @param {String} str 
+ * @returns an Object with the name and value of the variable
+ */
 function example(str){
     let output = {name:null,value:null};
 
@@ -69,6 +76,11 @@ function example(str){
     return output;
 }
 
+/**
+ * Generates an array of inputted size with random Numbers
+ * @param {Number} size 
+ * @returns an Array of random integers
+ */
 function randomGen(size){
     let temp = [];
     for(let i = 0;i<size;i++){

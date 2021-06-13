@@ -1,5 +1,6 @@
-/*
-    This tracks if the WebView was closed before the current command was executed.
+/** 
+* This tracks if the WebView was closed before the current command was executed.
+* Not being used anymore.
 */
 let justClosed = false;
 

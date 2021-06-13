@@ -3,6 +3,9 @@ const extraction = require('./extractExample');
 
 /**
  * Example Based Object
+ * @param {String} inType 
+ * @param {Array | Null} inParams 
+ * @param {Number} inNumOfParams 
  */
 function MethodType(inType,inParams,inNumOfParams){
 	this.type = inType;
@@ -11,10 +14,12 @@ function MethodType(inType,inParams,inNumOfParams){
 }
 
 
-
 /**
- * Look for comments above the function.
- * Search for the Example-Based inputs!
+ * Searches for Example Based Inputs 
+ * @param {Array} allLines 
+ * @param {String} name 
+ * @param {*} knownParams 
+ * @returns Object describing the location of the Example
  */
 function findComments(allLines,name,knownParams){
 
@@ -50,12 +55,7 @@ function findComments(allLines,name,knownParams){
 					if(Array.isArray(val) === false){
 						val = JSON.parse(val);
 					}
-					const exampleData = {
-						dataType: foundParam.type,
-						name: el,
-						value: [val]
-					}
-					return exampleData;
+					return {dataType: foundParam.type, name: el, value: [val]};
 				}else if(foundParam.type == 'Object'){
 					val = JSON.parse(foundExample.value);
 				}else if(foundParam.type == 'Number'){
@@ -63,13 +63,7 @@ function findComments(allLines,name,knownParams){
 				}else{
 					val = foundExample.value;
 				}
-
-				const exampleData = {
-					dataType: foundParam.type,
-					name: el,
-					value: val
-				}
-				return exampleData;
+				return {dataType: foundParam.type, name: el, value: val};
 			});
 
 			currentSearch.paramData = collectedExampleData;
@@ -77,9 +71,11 @@ function findComments(allLines,name,knownParams){
 			//We found the whole section & the data so we exit the loop
 			break;
 		}
+		//Begining of the found Example Based Input
 		if(currentLine.includes("/**") && currentLine.includes(name+" Example")){
 			foundComments.start = index + 1;
 		}
+
 		if(foundComments.end == -1 && foundComments.start >= 0){
 
 			let readData = breakDownData(currentLine);
@@ -128,6 +124,11 @@ function findParams(str){
 	}
 }
 
+/**
+ * Breaks Down the Example Based Input and starts categorising the inputs into an Object to store
+ * @param {String} str 
+ * @returns Data on each possible instance, along with error msgs
+ */
 function breakDownData(str){
 
 	let data = {header:null,val:null};

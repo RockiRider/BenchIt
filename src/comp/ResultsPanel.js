@@ -1,5 +1,5 @@
 /**
- * This is working!
+ * This page is served by the server, and is where the benchmarking takes place.
  */
 
 const getNonce = require('./getNonce');
@@ -9,15 +9,6 @@ class ResultsPanel {
     constructor(){
 
     }
-    /*
-    constructor(extensionUri){
-        this._extensionUri = extensionUri;
-        this.fspath = extensionUri._fsPath;
-        this.path = extensionUri.path;
-        this.getPath = extensionUri.fspath;
-    }
-    */
-
     getHtml(){
          // The scripts are loaded from the set directory of out/compiled
          // Use a nonce to only allow specific scripts to be run

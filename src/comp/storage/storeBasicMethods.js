@@ -6,6 +6,17 @@ const side = require('./sideBasicMethods');
 
 let store = [];
 
+/**
+ * 
+ * @param {String} inName Name of the Function
+ * @param {Number} inId Id of the Dynamic Function which should be unique
+ * @param {Number} inStart Where the function Starts in the file
+ * @param {Number} inFinsih here the function ends in the file
+ * @param {String} inPath The files path
+ * @param {String} inText The text of the function
+ * @param {String} inType The Type of function Dynamic | Basic
+ * @param {Object} inExamples The example based inputs for any possible parameters
+ */
 function BasicMethodObj(inName, inId, inStart, inFinsih, inPath, inText,inType,inExamples) {
   this.name = inName;
   this.id = inId;

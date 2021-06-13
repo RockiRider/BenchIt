@@ -45,13 +45,15 @@ function activate(context) {
 	}
 
 
+	/**
+	 * Tracks changes to the current document, in order to capture any changes made to existing tracked Basic/Dynamic Functions
+	 */
 	vscode.workspace.onDidChangeTextDocument(changeEvent => {
 		let currentDoc = vscode.window.activeTextEditor.document;
 		let currentAct = vscode.window.activeTextEditor;
 		// let activePath = currentDoc.uri.fsPath;
 		if (currentDoc.uri === changeEvent.document.uri && (basicMethodStorage.storeEmpty() || dynamicMethodStorage.storeEmpty())) {
 
-			//MORE TESTING NEEDED FOR LIVE PROGRAMMING
 			let line = vscode.window.activeTextEditor.selection.active.line;
 			// let char = vscode.window.activeTextEditor.selection.active.character;
 			let changingDoc = changeEvent.document.uri.fsPath;
@@ -114,6 +116,9 @@ function activate(context) {
 	let basicCounter = 1;
 	let dynamicCounter = 1;
 
+	/**
+	 * AddCase Command Execution Flow
+	 */
 	context.subscriptions.push(vscode.commands.registerCommand('benchit.addCase', function () {
 
 		let inputBox = new Promise((resolve, reject) => {
@@ -235,7 +240,8 @@ exports.activate = activate;
 
 
 /**
- * this method is called when your extension is deactivated
+ * This method is called when your extension is deactivated
+ * TODO: Clean Up is required!
  */
 function deactivate() {}
 
