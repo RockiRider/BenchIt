@@ -6,6 +6,9 @@
 </svelte:head>
 
 <script>
+    /**
+     * This is the main component thats served in the Browser. The benchmarking originates from here.
+     */
     import { onMount } from "svelte";
     import {createTraces,xDataPoint,yDataPoint,yErrorData,namesData,cleanDynamicData} from '../additions/trace';
 
@@ -53,9 +56,10 @@
         document.head.append(script);
 
         socket.addEventListener('open', function (event) {
-            // Connection opened
-            let basic = {head:"requesting-basic",val:0}
+            // Connection opened with WebSocket and requesting stored Data
+            let basic = {head:"requesting-basic",val:0} 
             socket.send(JSON.stringify(basic));
+
             let dynamic = {head:"requesting-dynamic",val:0}
             socket.send(JSON.stringify(dynamic));
         });
@@ -154,7 +158,7 @@
         
     }
 
-    //Dynamic Benchmark!!
+    //Dynamic Benchmark Results
     dynamicWorker.onmessage = function(e) {
         if(e.data == 'Error!'){
             resultState = "Syntax Error in one of your functions! Check console"
@@ -236,9 +240,8 @@
 
     function isOpen(ws) { return ws.readyState === ws.OPEN };
 
-    //Basic Results!!
+    //Basic Benchmark Results!!
     basicWorker.onmessage = function(e) {
-
         if(e.data == 'Error!'){
             resultState = "Syntax Error in one of your functions! Check console"
         }else{

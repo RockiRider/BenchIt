@@ -3,24 +3,21 @@ const findMethod = require('./comp/fileController/findMethod');
 const sidebarProvider = require('./comp/SideBarProvider');
 const basicMethodStorage = require('./comp/storage/storeBasicMethods');
 const dynamicMethodStorage = require('./comp/storage/storeDynamicMethods');
-//const mainDisplay = require('./comp/MainPanel');
-//const closeViewTracker = require('./comp/closeCounter');
+
+/** 
+* Legacy
+* const mainDisplay = require('./comp/MainPanel');
+* const closeViewTracker = require('./comp/closeCounter');
+*/
+
+
+
 
 
 const open = require('open');
 const {instance} = require('./comp/objController/serverInstance');
 let browserOpened = true;
 
-
-
-//import {COMMAND, CONFIGURATION} from './localserver/config';
-// this method is called when your extension is activated
-// your extension is activated the very first time the command is executed
-
-//To Mark when the WebView is closed
-
-//const webpage = new ResultsPanel.ResultsPanel();
-//const nodeServer = new node.LocalServer(webpage.getHtml());
 
 /**
  * @param {vscode.ExtensionContext} context
@@ -55,9 +52,6 @@ function activate(context) {
 		if (currentDoc.uri === changeEvent.document.uri && (basicMethodStorage.storeEmpty() || dynamicMethodStorage.storeEmpty())) {
 
 			//MORE TESTING NEEDED FOR LIVE PROGRAMMING
-			//console.log("Changes in Active File!");
-			// let newData = changeEvent.document.getText();
-			// console.log(newData);
 			let line = vscode.window.activeTextEditor.selection.active.line;
 			// let char = vscode.window.activeTextEditor.selection.active.character;
 			let changingDoc = changeEvent.document.uri.fsPath;
@@ -106,13 +100,12 @@ function activate(context) {
 			}
 
 		}
-		/*
+		/* TODO:
 		Live Programming Could be made more efficient like so
 		for (const change of changeEvent.contentChanges) {
 			 console.log(change.range); // range of text being replaced
 			 console.log(change.text); // text replacement
 		}
-
 		*/
 	});
 
@@ -150,7 +143,7 @@ function activate(context) {
 
 
 
-		// Program Proceeds Under Here
+		// AddCase Command Process starts here
 		inputBox.then((method) => {
 
 			//Check for active editor first and then reject if need be
@@ -163,7 +156,6 @@ function activate(context) {
 					findFunction(method, foundEditor).then((data) => {
 						//Function is found from here! Start the server!
 						
-
 						let methodInfo;
 
 						if(data.type == 'Basic'){
@@ -202,6 +194,7 @@ function activate(context) {
 						}
 						console.log(methodInfo);
 						
+						//TODO: Don't really need this block anymore due to storage
 						if(browserOpened){
 							instance.handleMsg({type: 'new-function',data: methodInfo});
 						}else{
@@ -215,47 +208,6 @@ function activate(context) {
 								vscode.window.showWarningMessage('Error! Could not open Browser!');
 							});
 						}
-
-						/**
-						*  This is all the WebView Compenent which is depcreated!
-						*  Unusable due to No WebWorker Support.
-						
-						let loadSaveData = closeViewTracker.getClose();
-
-						//Display Web View and send in the new data, whilst checking if there were any previous tracked functions
-						mainDisplay.MainPanel.createOrShow(context.extensionUri);
-						if (loadSaveData) {
-							//Get whole array
-							let allData = methodStorage.getStore();
-							mainDisplay.MainPanel.currentPanel._panel.webview.postMessage({
-								type: 'load-save',
-								data: allData
-							});
-							closeViewTracker.setClose(false);
-						} else {
-							mainDisplay.MainPanel.currentPanel._panel.webview.postMessage({
-								type: 'new-function',
-								data: methodInfo
-							});
-						}
-						*/
-
-						//STARTS HERE ---------------
-						/*
-						setTimeout(function(){ 
-							const webpage = new ResultsPanel.ResultsPanel(context.extensionUri);
-							const nodeServer = new nodeserver.LocalServer(context.extensionUri,webpage.getHtml());
-							nodeServer.createServer();
-						},300);
-						*/
-
-						/*Switching Views!!
-						mainDisplay.MainPanel.currentPanel._panel.onDidChangeViewState(e => {
-								console.log("Changed!");
-								mainDisplay.MainPanel.handleSwitch();
-						});
-						*/
-
 					}).catch((errorMsg) => {
 						//Function not found!
 						vscode.window.showWarningMessage(errorMsg + ". Try again");

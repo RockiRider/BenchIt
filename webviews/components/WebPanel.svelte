@@ -8,6 +8,7 @@
 <script>
 /**
  * Not Using this anymore, however useful for WebView Template if required!
+ * This compenent has been discontinued.
  */
 
 

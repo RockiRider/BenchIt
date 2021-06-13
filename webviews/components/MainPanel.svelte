@@ -3,9 +3,10 @@ import { onMount } from "svelte";
 import basicStorage from '../../src/comp/storage/sideBasicMethods';
 import dynamicStorage from '../../src/comp/storage/sideDynamicMethods';
 
+/**
+ * This is the SideBar Component.
+ */
 
-  //Bug!! = Doesnt sync information from WebView (If Sidebar not opened yet!)
-  //Once its open its fine
 
   let basicState = true;
   let disabledBasic = false;

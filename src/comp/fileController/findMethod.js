@@ -18,8 +18,6 @@ function getMethodData(functionName,activeDoc) {
 	const path = activeDoc.document.uri.fsPath;
 	const location = getLocation(functionName,path);
 
-	//let firstLine = activeDoc.document.lineAt(location.start - 1);;
-	//let lastLine = activeDoc.document.lineAt(location.finish);
 
 	if(location.header !== "Accepted"){
 		return {head:"Error",msg:location.errorMsg}
@@ -104,6 +102,7 @@ function getLocation(functionName,path){
 						console.log("Defaults to Basic");
 						let newData = new example.MethodType("Basic",0,0);
 						findings.exampleData = {exampleData:newData};
+						
 						//TODO: What if we want a function with 0 params to execute dynamically?
 					}
 				}else{

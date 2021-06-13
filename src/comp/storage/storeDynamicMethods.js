@@ -16,7 +16,7 @@ function DynamicMethodObj(inName, inId, inStart, inFinsih, inPath, inText,inType
   this.type = inType;
   this.examples = inExamples;
 
-  //We should store colour and results too!
+  //TODO: We should store colour and results too!
 }
 
 /**

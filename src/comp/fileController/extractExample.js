@@ -1,5 +1,13 @@
+/**
+ * extractExample.js essentially parses the inputted example data.
+ */
 
 
+/**
+ * 
+ * @param {*} str 
+ * @returns 
+ */
 function type(str){
 
     if(str.includes("@type == Basic")){

@@ -91,8 +91,7 @@ class LocalServer {
 
 }
 //TODO: Integrate Headless Chrome Inside VSCode
-//TODO: Run Web Worker inside Svelte
-
+//TODO: Port in use error
 
 LocalServer.port = 52999;
 
