@@ -65,14 +65,6 @@ The extension itself is a bit inefficient at the moment, but that will be polish
 - Click `Open Browser` and you can now benchmark all your tracked `Simple` or `Dynamic` functions. 
 
 
-
-### Extra info
-The benchmarking functionality is built ontop of Benchmark.js (formally utilised in JSPerf).
-
-It's all on you to ensure that you micro-benchmark correctly.
-
-However... we do try to help you along the way.
-
 ## Syntax for Example Based Programming
 
 ``` javascript
@@ -100,3 +92,87 @@ function mergeSort(arr){
     //code is here
 }
 ```
+## Development Instructions
+1. Install npm dependacies 
+2. Run `npm run watch` to compile
+3. Run the codebase with VSCode (F5), this should open a new VSCode instance
+4. Open a JS File with that instance and start benchmarking!
+
+### Getting Started Script
+**Why not try and benchmark sorting algorithms in JS?**
+Please check the repo's issues if this does not work correctly!
+``` javascript
+/** mergeSort Example
+*@param {Array} arr
+*@type == Dynamic
+*@example arr == "RandomInt 200"
+*/
+function mergeSort(arr){
+    const half = arr.length / 2
+    if(arr.length < 2){
+      return arr 
+    }
+    const left = arr.splice(0, half)
+    function merge(left, right) {
+        let arr = []
+        while (left.length && right.length) {
+             
+            if (left[0] < right[0]) {
+                arr.push(left.shift())  
+            } else {
+                arr.push(right.shift()) 
+            }
+        }
+        return [ ...arr, ...left, ...right ]
+    }
+    return merge(mergeSort(left),mergeSort(arr))
+}
+/** timSort Example
+* @param {Array} arr
+* @type == Dynamic
+* @example arr == "RandomInt 300"
+*/
+function timSort(arr){
+    let sorted = arr.sort();
+    return sorted;
+}
+/**  bubbleSort Example
+* @param {Array} arr
+* @type == Dynamic
+* @example arr == "RandomInt 500"
+*/
+function bubbleSort(arr){
+    let len = arr.length;
+    let swapped;
+    do {
+        swapped = false;
+        for (let i = 0; i < len; i++) {
+            if (arr[i] > arr[i + 1]) {
+                let tmp = arr[i];
+                arr[i] = arr[i + 1];
+                arr[i + 1] = tmp;
+                swapped = true;
+            }
+        }
+    } while (swapped);
+    return arr;
+}
+```
+
+**The output to expect should be something like this**
+![Bencharmking Results](assets/benchmarkDisplay.png)
+
+**The key functionality with `Dynamic benchmarking` is witnessing the speed of algorithms change as the data size increases**
+
+
+
+### Extra information
+The benchmarking functionality is built ontop of Benchmark.js (formally utilised in JSPerf).
+
+It's all on you to ensure that you micro-benchmark correctly.
+
+However... we do try to help you along the way. 
+
+For Instance when benchmarking the `Dynamic` type, the largest array declared (via the example based inputs) will be used for all the `Dynamic functions` within that benchmarking instance. Ensuring a constant workload through-out your benchmarks!
+
+We combat dead code elimination on the back-end, thus heavily encourage benchmarking with functions that actually return something!
