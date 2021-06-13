@@ -8,7 +8,12 @@ const fs = require('fs');
 const example = require('./findExamples');
 
 
-
+/**
+ * Returns
+ * @param {String} functionName 
+ * @param {vscode.TextEditor} activeDoc 
+ * @returns JSON Object with all data regarding the found method/function.
+ */
 function getMethodData(functionName,activeDoc) {
 
 	if(functionName ===''){
@@ -22,7 +27,6 @@ function getMethodData(functionName,activeDoc) {
 	if(location.header !== "Accepted"){
 		return {head:"Error",msg:location.errorMsg}
 	}
-	//console.log(location);
 
 	let startPos = new vscode.Position(location.start-1,location.firstChar);
 	let finishPos = new vscode.Position(location.finish-1,location.lastChar);
@@ -44,18 +48,21 @@ function getMethodData(functionName,activeDoc) {
 		return data;
 	}catch(e){
 		console.log(e);	//Error with finding the functionName
-		//Probably a problem with the number of lines in a document
+		//FIXME: Probably a problem with the number of lines in a document
 	}
 	
 	return {head:"Error",msg:"Function not found"};
 }
 
+
 /**
  * Finds the function location on the file & calls example.findComments to find the example based inputs
+ * @param {String} functionName 
+ * @param {String} path 
+ * @returns JSON Object of the functions location inside the document, including possible example based inputs.
  */
 function getLocation(functionName,path){
 	let lines = fs.readFileSync(path, 'utf8').split('\n')
-	.filter(Boolean);
 
 	let findings = {
 		header: "Failed",
@@ -72,7 +79,7 @@ function getLocation(functionName,path){
 	let startFound = false;
 	let endFound = false;
 
-
+	console.log(lines);
 
 	for (let index = 0; index < lines.length; index++) {
 		if (findings.finish != 0 &&  findings.start != 0) {
@@ -100,7 +107,7 @@ function getLocation(functionName,path){
 						}
 					}else{
 						console.log("Defaults to Basic");
-						let newData = new example.MethodType("Basic",0,0);
+						let newData = new example.MethodType("Basic",null,0);
 						findings.exampleData = {exampleData:newData};
 						
 						//TODO: What if we want a function with 0 params to execute dynamically?
@@ -112,7 +119,7 @@ function getLocation(functionName,path){
 						findings.header = "Failed";
 						findings.errorMsg = "The function has parameters that are not defined with examples";
 					}else{
-						let newData = new example.MethodType("Basic",0,0);
+						let newData = new example.MethodType("Basic",null,0);
 						findings.exampleData = {exampleData:newData};
 					}
 					
