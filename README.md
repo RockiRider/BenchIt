@@ -133,7 +133,7 @@ function mergeSort(arr){
 * @example arr == "RandomInt 300"
 */
 function timSort(arr){
-    let sorted = arr.sort();
+    let sorted = arr.sort((a, b) => a - b));
     return sorted;
 }
 /**  bubbleSort Example
