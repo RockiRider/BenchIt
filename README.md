@@ -105,7 +105,7 @@ Please check the repo's issues if this does not work correctly!
 /** mergeSort Example
 *@param {Array} arr
 *@type == Dynamic
-*@example arr == "RandomInt 200"
+*@example arr == "RandomInt 500"
 */
 function mergeSort(arr){
     const half = arr.length / 2
@@ -130,7 +130,7 @@ function mergeSort(arr){
 /** timSort Example
 * @param {Array} arr
 * @type == Dynamic
-* @example arr == "RandomInt 300"
+* @example arr == "RandomInt 500"
 */
 function timSort(arr){
     let sorted = arr.sort((a, b) => a - b));
